@@ -584,12 +584,12 @@ async function openTrends(){
   document.getElementById("tw").innerHTML=`<div class="kaart">${rows}</div><p class="mini">Opkomst = geverifieerd aanwezig ÷ geverifieerde activiteiten.</p>`;
 }
 
-// ---------- DIENSTEN / CARPOOL ----------
+// ---------- DIENSTEN / CARPOOL / TAKEN ----------
 const CP={dir:"heen",act:null,present:[]};
-let cpSeats=3, cpPick=null, cpName="", scNaam="", ovView="schema";
+let cpSeats=3, cpPick=null, cpName="", scNaam="", frNaam="", ovView="schema";
 function viewDiensten(){
-  el.innerHTML=`<h2>Diensten — carpool</h2>
-    <p class="mini" style="margin-bottom:8px">Kies een activiteit om de carpool te regelen (vooral voor uitwedstrijden).</p>
+  el.innerHTML=`<h2>Diensten</h2>
+    <p class="mini" style="margin-bottom:8px">Kies een activiteit om je in te tekenen (rijden, scheidsrechter, eten/drinken).</p>
     <div id="lijst"><div class="center">Laden…</div></div>`;
   const u=activityStream(acts=>{
     acts=acts.filter(a=>!a.cancelled);
@@ -597,31 +597,30 @@ function viewDiensten(){
     if(!acts.length){L.innerHTML=`<div class="kaart"><div class="center">Geen komende activiteiten.</div></div>`;return;}
     L.innerHTML=acts.map(a=>`<div class="kaart"><div class="rij-item" data-cp="${a.id}">
       <div class="datum"><div class="d">${new Date(a.date).getDate()}</div><div class="m">${MAAND[new Date(a.date).getMonth()]}</div></div>
-      <div class="info"><div class="titel">${titel(a)}</div><div class="sub">${subline(a)}${a.homeAway==='Uit'?' · uit':''}</div></div><span class="pijl">›</span></div></div>`).join("");
-    L.querySelectorAll("[data-cp]").forEach(r=>r.onclick=()=>openCarpool(r.dataset.cp));
+      <div class="info"><div class="titel">${titel(a)}</div><div class="sub">${subline(a)}${a.homeAway?' · '+a.homeAway.toLowerCase():''}</div></div><span class="pijl">›</span></div></div>`).join("");
+    L.querySelectorAll("[data-cp]").forEach(r=>r.onclick=()=>openDienst(r.dataset.cp));
   });
   unsub.push(u);
 }
-async function openCarpool(actId){
+async function openDienst(actId){
   clearSubs(); cpPick=null;
   const snap=await getDoc(doc(db,"activities",actId));
   if(!snap.exists()){viewDiensten();return;}
-  CP.act={id:actId,...snap.data()};
+  CP.act={id:actId,...snap.data()}; CP.dir="heen";
   await loadPlayers();
-  if(CP.act.homeAway==='Thuis'){ scNaam=(MYUSER&&MYUSER.name)||""; subscribeScheids(); return; }
-  CP.dir="heen";
-  const rs=await getDocs(collection(db,"activities",actId,"rsvp"));
-  const out={}; rs.docs.forEach(d=>{ if(d.data().status==='out') out[d.id]=1; });
-  CP.present=PLAYERS.filter(p=>!out[p.id]).map(p=>({id:p.id,name:p.name}));
-  cpName=(MYUSER&&MYUSER.name)||"";
-  subscribeCarpool();
+  const thuis=CP.act.homeAway==='Thuis';
+  if(!thuis){ const rs=await getDocs(collection(db,"activities",actId,"rsvp")); const out={}; rs.docs.forEach(d=>{if(d.data().status==='out')out[d.id]=1;}); CP.present=PLAYERS.filter(p=>!out[p.id]).map(p=>({id:p.id,name:p.name})); }
+  cpName=(MYUSER&&MYUSER.name)||""; scNaam=(MYUSER&&MYUSER.name)||""; frNaam=(MYUSER&&MYUSER.name)||"";
+  el.innerHTML=`<span class="terug" id="terug">‹ Diensten</span>
+    <div class="detail-kop">${titel(CP.act)}</div><div class="mini">${subline(CP.act)}${CP.act.homeAway?' · '+CP.act.homeAway.toLowerCase():''}</div>
+    <div id="primary" style="margin-top:10px"></div>
+    <div style="margin-top:20px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="width:4px;height:16px;background:var(--rood);border-radius:2px"></span><b style="font-size:15px">🍎 Eten / drinken / fruit</b></div><div id="fruit"></div></div>`;
+  document.getElementById("terug").onclick=()=>{clearSubs();viewDiensten();};
+  if(thuis){ subscribeScheids(); } else { subscribeCarpool(); }
+  subscribeFruit();
 }
 function cpRef(){ return doc(db,"activities",CP.act.id,"carpool",CP.dir); }
-function subscribeCarpool(){
-  clearSubs(); cpPick=null;
-  const u=onSnapshot(cpRef(), ds=>drawCarpool(ds.exists()?ds.data():{}));
-  unsub.push(u);
-}
+function subscribeCarpool(){ const u=onSnapshot(cpRef(), ds=>drawCarpool(ds.exists()?ds.data():{})); unsub.push(u); }
 async function cpSet(obj){ try{ await setDoc(cpRef(), obj, {merge:true}); }catch(e){ alert("Kon niet opslaan: "+e.message);} }
 function carsOf(data){ const m=data.cars||{}; return Object.keys(m).filter(id=>m[id]&&m[id].name).map(id=>({id,name:m[id].name,seats:m[id].seats||1,klaar:!!m[id].klaar,owner:m[id].owner})); }
 function locOf(data,pid){ const cid=(data.assign||{})[pid]; const m=data.cars||{}; return (cid&&m[cid]&&m[cid].name)?cid:null; }
@@ -632,7 +631,7 @@ function waText(data){ const cars=carsOf(data);
   if(los.length)t+=`Nog in te delen: ${los.join(', ')} — wie kan rijden?\n`;
   return t; }
 function drawCarpool(data){
-  const a=CP.act, dir=CP.dir, cars=carsOf(data);
+  const dir=CP.dir, cars=carsOf(data);
   const kidsIn=cid=>CP.present.filter(p=>locOf(data,p.id)===cid);
   const los=CP.present.filter(p=>!locOf(data,p.id));
   const totVrij=cars.reduce((s,c)=>s+(c.seats-kidsIn(c.id).length),0);
@@ -641,7 +640,8 @@ function drawCarpool(data){
   const lc=data.lastChange; const lcHtml=lc?`<div class="mini" style="margin:8px 0 0">Laatst gewijzigd: ${esc(lc.kind)} → ${esc(lc.naar)}, door ${esc(lc.door)}${lc.ts?' · '+fmtC(lc.ts):''}</div>`:'';
   const banner=los.length?`<div class="fout">${los.length} kind(eren) zonder plek — meld een auto aan of deel ze in.</div>`:(cars.length?`<div class="meld">Iedereen heeft een plek ✓ · ${totVrij} stoel(en) over.</div>`:`<div class="mini">Nog geen auto's aangemeld.</div>`);
   const sb='width:26px;height:26px;border:1px solid var(--lijn);background:#fff;border-radius:7px;font-size:16px;cursor:pointer;line-height:1';
-  const seg=`<div style="display:flex;background:#f1efe9;border-radius:10px;padding:3px;margin:10px 0 12px"><button id="dh" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='heen'?'#fff':'none'};color:${dir==='heen'?'var(--rood)':'var(--grijs)'}">Heen</button><button id="dt" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='terug'?'#fff':'none'};color:${dir==='terug'?'var(--rood)':'var(--grijs)'}">Terug</button></div>`;
+  const seg=`<div style="display:flex;background:#f1efe9;border-radius:10px;padding:3px;margin:0 0 12px"><button id="dh" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='heen'?'#fff':'none'};color:${dir==='heen'?'var(--rood)':'var(--grijs)'}">Heen</button><button id="dt" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='terug'?'#fff':'none'};color:${dir==='terug'?'var(--rood)':'var(--grijs)'}">Terug</button></div>`;
+  const kop=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="width:4px;height:16px;background:var(--rood);border-radius:2px"></span><b style="font-size:15px">🚗 Rijden</b></div>`;
   const zelf=`<div class="kaart"><b style="font-size:13px">Auto aanmelden</b>
     <input id="cpnaam" placeholder="Naam (bijv. jouw naam, of 'Opa Jan')" value="${esc(cpName)}">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;color:var(--grijs)">Plekken: <button id="sm" style="${sb}">−</button> <b>${cpSeats}</b> <button id="sp" style="${sb}">+</button></span><button id="aan" class="knop" style="width:auto;margin-top:0;padding:9px 16px">Toevoegen</button></div>
@@ -659,21 +659,16 @@ function drawCarpool(data){
         <button data-klaar="${c.id}" style="border:1px solid ${c.klaar?'var(--groen)':'var(--lijn)'};background:${c.klaar?'var(--groen)':'#fff'};color:${c.klaar?'#fff':'var(--grijs)'};border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;align-self:flex-start">${c.klaar?'compleet ✓':'compleet?'}</button></div>
       <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:6px">${kids.map(p=>chip(p,c.id)).join('')||'<span class="mini">— nog leeg, deel kinderen in —</span>'}</div></div>`;}).join('');
   const losHtml=los.length?`<div class="kaart" style="border-style:dashed;border-color:#E24B4A"><div class="mini" style="color:#791F1F;font-weight:600;margin-bottom:6px">Nog in te delen — tik een kind om een auto te kiezen</div><div style="display:flex;flex-wrap:wrap;gap:6px">${los.map(p=>chip(p,null)).join('')}</div></div>`:'';
-  el.innerHTML=`<span class="terug" id="terug">‹ Diensten</span>
-    <div class="detail-kop">Carpool — ${titel(a)}</div><div class="mini">${subline(a)}</div>
-    ${alle?'<div class="meld" style="text-align:center;margin-top:10px">✅ Alle wagens compleet — team is onderweg!</div>':''}
-    ${seg}${banner}${lcHtml}${zelf}
-    <div class="mini" style="margin:4px 0 8px">${dir==='heen'?'Heenreis':'Terugreis'}</div>
-    ${carsHtml}${losHtml}
-    <a class="knop" id="wabtn" style="background:#25D366">Kopieer voor WhatsApp</a><div id="wamsg"></div>
-    <div class="mini" style="margin-top:12px;border-top:1px solid var(--lijn);padding-top:9px">Route naar ophaaladres en de rijbeurten-teller volgen zodra de contactgegevens in de app staan.</div>`;
+  const box=document.getElementById("primary"); if(!box)return;
+  box.innerHTML=`${kop}${alle?'<div class="meld" style="text-align:center;margin-top:0">✅ Alle wagens compleet — team is onderweg!</div>':''}${seg}${banner}${lcHtml}${zelf}
+    <div class="mini" style="margin:4px 0 8px">${dir==='heen'?'Heenreis':'Terugreis'}</div>${carsHtml}${losHtml}
+    <a class="knop" id="wabtn" style="background:#25D366">Kopieer voor WhatsApp</a><div id="wamsg"></div>`;
   wireCarpool(data,cars);
 }
 function wireCarpool(data,cars){
-  document.getElementById("terug").onclick=()=>{clearSubs();viewDiensten();};
   const dh=document.getElementById("dh"),dt=document.getElementById("dt");
-  if(dh)dh.onclick=()=>{CP.dir='heen';subscribeCarpool();};
-  if(dt)dt.onclick=()=>{CP.dir='terug';subscribeCarpool();};
+  if(dh)dh.onclick=()=>{CP.dir='heen';clearSubs();subscribeCarpool();subscribeFruit();};
+  if(dt)dt.onclick=()=>{CP.dir='terug';clearSubs();subscribeCarpool();subscribeFruit();};
   const sm=document.getElementById("sm"),sp=document.getElementById("sp");
   if(sm)sm.onclick=()=>{cpSeats=Math.max(1,cpSeats-1);drawCarpool(data);};
   if(sp)sp.onclick=()=>{cpSeats=Math.min(6,cpSeats+1);drawCarpool(data);};
@@ -690,29 +685,40 @@ function wireCarpool(data,cars){
   const wb=document.getElementById("wabtn");
   if(wb)wb.onclick=async(e)=>{e.preventDefault();const t=waText(data);const m=document.getElementById("wamsg");try{await navigator.clipboard.writeText(t);m.className="meld";m.textContent="Gekopieerd — plak het in de WhatsApp-groep.";}catch(err){m.className="meld";m.style.whiteSpace="pre-wrap";m.textContent="Selecteer en kopieer:\n"+t;}};
 }
-// ---------- SCHEIDSRECHTER (thuiswedstrijden) ----------
+// ---------- SCHEIDSRECHTER (thuis) ----------
 function scheidsRef(){ return doc(db,"activities",CP.act.id,"taken","scheids"); }
-function subscribeScheids(){ clearSubs(); const u=onSnapshot(scheidsRef(), ds=>drawScheids(ds.exists()?ds.data():{})); unsub.push(u); }
+function subscribeScheids(){ const u=onSnapshot(scheidsRef(), ds=>drawScheids(ds.exists()?ds.data():{})); unsub.push(u); }
 function drawScheids(data){
   const list=(data.list||[]).filter(x=>x&&x.name);
-  const status=list.length?`<div class="meld">Scheidsrechter geregeld ✓ (${list.length})</div>`:`<div class="fout">Nog een scheidsrechter gezocht.</div>`;
-  el.innerHTML=`<span class="terug" id="terug">‹ Diensten</span>
-    <div class="detail-kop">Scheidsrechter — ${titel(CP.act)}</div><div class="mini">${subline(CP.act)} · thuis</div>
+  const box=document.getElementById("primary"); if(!box)return;
+  const status=list.length?`<div class="meld" style="margin-top:0">Scheidsrechter geregeld ✓ (${list.length})</div>`:`<div class="fout" style="margin-top:0">Nog een scheidsrechter gezocht.</div>`;
+  box.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="width:4px;height:16px;background:var(--rood);border-radius:2px"></span><b style="font-size:15px">🚩 Scheidsrechter</b></div>
     ${status}
     <div class="kaart"><b style="font-size:13px">Ik doe de scheids</b>
       <input id="scnaam" placeholder="Naam (jij, of iemand anders)" value="${esc(scNaam)}">
       <button id="scaan" class="knop" style="margin-top:10px">Aanmelden als scheidsrechter</button></div>
-    <div class="kaart"><div style="font-size:13px;font-weight:600;margin-bottom:6px">Ingetekend</div>
-      ${list.length?list.map((x,i)=>`<div class="rrow"><div class="nm">🚩 ${esc(x.name)}</div>${(x.owner===ME.uid||isAdmin())?`<span data-scdel="${i}" style="color:var(--rood);cursor:pointer;font-size:12px">verwijderen</span>`:''}</div>`).join(''):'<div class="mini">Nog niemand ingetekend.</div>'}</div>`;
-  document.getElementById("terug").onclick=()=>{clearSubs();viewDiensten();};
+    ${list.length?`<div class="kaart"><div style="font-size:13px;font-weight:600;margin-bottom:6px">Ingetekend</div>${list.map((x,i)=>`<div class="rrow"><div class="nm">🚩 ${esc(x.name)}</div>${(x.owner===ME.uid||isAdmin())?`<span data-scdel="${i}" style="color:var(--rood);cursor:pointer;font-size:12px">verwijderen</span>`:''}</div>`).join('')}</div>`:''}`;
   const nm=document.getElementById("scnaam"); if(nm)nm.oninput=()=>{scNaam=nm.value;};
   const aan=document.getElementById("scaan"); if(aan)aan.onclick=()=>{const name=((document.getElementById("scnaam").value||'').trim())||((MYUSER&&MYUSER.name)||ME.email||'Scheids');const nl=list.concat([{name,owner:ME.uid,ts:Date.now()}]);scNaam=(MYUSER&&MYUSER.name)||'';setDoc(scheidsRef(),{list:nl},{merge:true}).catch(e=>alert("Kon niet opslaan: "+e.message));};
-  document.querySelectorAll("[data-scdel]").forEach(b=>b.onclick=()=>{const i=+b.dataset.scdel;const nl=list.slice();nl.splice(i,1);setDoc(scheidsRef(),{list:nl},{merge:true}).catch(e=>alert(e.message));});
+  box.querySelectorAll("[data-scdel]").forEach(b=>b.onclick=()=>{const i=+b.dataset.scdel;const nl=list.slice();nl.splice(i,1);setDoc(scheidsRef(),{list:nl},{merge:true}).catch(e=>alert(e.message));});
+}
+// ---------- ETEN/DRINKEN/FRUIT (uit + thuis) ----------
+function fruitRef(){ return doc(db,"activities",CP.act.id,"taken","fruit"); }
+function subscribeFruit(){ const u=onSnapshot(fruitRef(), ds=>drawFruit(ds.exists()?ds.data():{})); unsub.push(u); }
+function drawFruit(data){
+  const list=(data.list||[]).filter(x=>x&&x.name);
+  const box=document.getElementById("fruit"); if(!box)return;
+  box.innerHTML=`${list.length?`<div class="meld" style="margin-top:0">Geregeld ✓ (${list.length})</div>`:`<div class="fout" style="margin-top:0">Nog niemand neemt eten/drinken mee.</div>`}
+    <div class="kaart"><input id="frnaam" placeholder="Naam (jij, of iemand anders)" value="${esc(frNaam)}"><button id="fraan" class="knop" style="margin-top:10px">Ik neem eten/drinken mee</button></div>
+    ${list.length?`<div class="kaart"><div style="font-size:13px;font-weight:600;margin-bottom:6px">Ingetekend</div>${list.map((x,i)=>`<div class="rrow"><div class="nm">🍎 ${esc(x.name)}</div>${(x.owner===ME.uid||isAdmin())?`<span data-frdel="${i}" style="color:var(--rood);cursor:pointer;font-size:12px">verwijderen</span>`:''}</div>`).join('')}</div>`:''}`;
+  const nm=document.getElementById("frnaam"); if(nm)nm.oninput=()=>{frNaam=nm.value;};
+  const aan=document.getElementById("fraan"); if(aan)aan.onclick=()=>{const name=((document.getElementById("frnaam").value||'').trim())||((MYUSER&&MYUSER.name)||ME.email||'Ouder');const nl=list.concat([{name,owner:ME.uid,ts:Date.now()}]);frNaam=(MYUSER&&MYUSER.name)||'';setDoc(fruitRef(),{list:nl},{merge:true}).catch(e=>alert("Kon niet opslaan: "+e.message));};
+  box.querySelectorAll("[data-frdel]").forEach(b=>b.onclick=()=>{const i=+b.dataset.frdel;const nl=list.slice();nl.splice(i,1);setDoc(fruitRef(),{list:nl},{merge:true}).catch(e=>alert(e.message));});
 }
 // ---------- OVERZICHT ----------
 async function viewOverzicht(){
   el.innerHTML=`<h2>Overzicht</h2>
-    <div style="display:flex;background:#f1efe9;border-radius:10px;padding:3px;margin-bottom:12px"><button id="ov1" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${ovView==='schema'?'#fff':'none'};color:${ovView==='schema'?'var(--rood)':'var(--grijs)'}">Rijschema</button><button id="ov2" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${ovView==='verdeling'?'#fff':'none'};color:${ovView==='verdeling'?'var(--rood)':'var(--grijs)'}">Verdeling</button></div>
+    <div style="display:flex;background:#f1efe9;border-radius:10px;padding:3px;margin-bottom:12px"><button id="ov1" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${ovView==='schema'?'#fff':'none'};color:${ovView==='schema'?'var(--rood)':'var(--grijs)'}">Taken</button><button id="ov2" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${ovView==='verdeling'?'#fff':'none'};color:${ovView==='verdeling'?'var(--rood)':'var(--grijs)'}">Verdeling</button></div>
     <div id="ovbody"><div class="center">Berekenen…</div></div>`;
   document.getElementById("ov1").onclick=()=>{ovView='schema';viewOverzicht();};
   document.getElementById("ov2").onclick=()=>{ovView='verdeling';viewOverzicht();};
@@ -722,26 +728,29 @@ async function viewOverzicht(){
   const acts=asnap.docs.map(d=>({id:d.id,...d.data()})).filter(a=>!a.cancelled);
   const tally={}; const rows=[];
   for(const a of acts){
-    let rijders=[],plekken=0,sch=[];
+    let rijders=[],plekken=0,sch=[],fr=[];
     try{const cp=await getDoc(doc(db,"activities",a.id,"carpool","heen"));if(cp.exists()){const m=cp.data().cars||{};Object.keys(m).forEach(id=>{if(m[id]&&m[id].name){rijders.push(m[id].name);plekken+=(m[id].seats||0);}});}}catch(e){}
     try{const sc=await getDoc(doc(db,"activities",a.id,"taken","scheids"));if(sc.exists()){(sc.data().list||[]).forEach(x=>{if(x&&x.name)sch.push(x.name);});}}catch(e){}
-    rijders.forEach(n=>tally[n]=(tally[n]||0)+1);
-    sch.forEach(n=>tally[n]=(tally[n]||0)+1);
-    rows.push({a,rijders,plekken,sch});
+    try{const ff=await getDoc(doc(db,"activities",a.id,"taken","fruit"));if(ff.exists()){(ff.data().list||[]).forEach(x=>{if(x&&x.name)fr.push(x.name);});}}catch(e){}
+    rijders.forEach(n=>tally[n]=(tally[n]||0)+1); sch.forEach(n=>tally[n]=(tally[n]||0)+1); fr.forEach(n=>tally[n]=(tally[n]||0)+1);
+    rows.push({a,rijders,plekken,sch,fr});
   }
   const body=document.getElementById("ovbody"); if(!body)return;
+  const chipOk='<span class="chip in">rond ✓</span>', chipNo=t=>`<span class="chip out">${t}</span>`;
+  const taak=(icon,label,ok,txt)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px"><span style="flex:1">${icon} ${label}: <span style="color:var(--grijs)">${txt}</span></span>${ok?chipOk:chipNo('gezocht')}</div>`;
   if(ovView==='schema'){
     const coach=`<div style="background:#faf9f6;border:1px solid var(--lijn);border-radius:12px;padding:10px 13px;margin-bottom:11px;font-size:13px"><span style="color:var(--grijs)">📣 Coach + assistent (vast):</span> <b>namen volgen</b></div>`;
     const list=rows.filter(r=>{const t=(r.a.type||'').toLowerCase();return t.includes('wedstrijd')&&r.a.date&&new Date(r.a.date)>=today;}).map(r=>{const a=r.a;const thuis=a.homeAway==='Thuis';
-      let taak,chip;
-      if(thuis){taak=`🚩 ${r.sch.length} scheidsrechter(s)`;chip=r.sch.length?`<span class="chip in">rond ✓</span>`:`<span class="chip out">nog gezocht</span>`;}
-      else{const nodig=PLAYERS.length-r.plekken;taak=`🚗 ${r.rijders.length} rijder(s) · ${r.plekken}/${PLAYERS.length} plekken`;chip=r.rijders.length===0?`<span class="chip out">rijders gezocht</span>`:(nodig<=0?`<span class="chip in">rond ✓</span>`:`<span class="chip out">nog ${nodig} plekken</span>`);}
-      return `<div class="kaart" style="display:flex;align-items:center;gap:10px"><div class="datum"><div class="d">${new Date(a.date).getDate()}</div><div class="m">${MAAND[new Date(a.date).getMonth()]}</div></div><div class="info"><div class="titel">${titel(a)}</div><div class="mini">${taak}</div></div>${chip}</div>`;}).join('');
+      let taken='';
+      if(thuis){ taken+=taak('🚩','Scheidsrechter',r.sch.length>0,r.sch.length?r.sch.join(', '):'nog niemand'); }
+      else{ const nodig=PLAYERS.length-r.plekken; taken+=taak('🚗','Rijden',r.rijders.length>0&&nodig<=0,`${r.rijders.length} auto(s) · ${r.plekken}/${PLAYERS.length} plekken`); }
+      taken+=taak('🍎','Eten/drinken',r.fr.length>0,r.fr.length?r.fr.join(', '):'nog niemand');
+      return `<div class="kaart"><div style="display:flex;align-items:center;gap:10px"><div class="datum"><div class="d">${new Date(a.date).getDate()}</div><div class="m">${MAAND[new Date(a.date).getMonth()]}</div></div><div class="info"><div class="titel">${titel(a)}</div><div class="mini">${subline(a)}${a.homeAway?' · '+a.homeAway.toLowerCase():''}</div></div></div><div style="margin-top:8px;border-top:1px solid var(--lijn)">${taken}</div></div>`;}).join('');
     body.innerHTML=coach+(list||'<div class="kaart"><div class="center">Geen komende wedstrijden.</div></div>');
   } else {
     const entries=Object.entries(tally).sort((a,b)=>b[1]-a[1]);
     const max=Math.max(1,...entries.map(e=>e[1]));
-    body.innerHTML=`<div class="mini" style="margin-bottom:10px">Hoe vaak ieder heeft gereden of gescheidsrechterd dit seizoen.</div>`+
+    body.innerHTML=`<div class="mini" style="margin-bottom:10px">Hoe vaak ieder een taak heeft opgepakt dit seizoen (rijden, scheids, eten/drinken).</div>`+
       (entries.length?entries.map(e=>`<div style="display:flex;align-items:center;gap:10px;padding:6px 0"><div style="width:130px;font-size:13px;font-weight:500">${esc(e[0])}</div><div style="flex:1;height:14px;background:#f1efe9;border-radius:7px;overflow:hidden"><div style="height:100%;width:${Math.round(100*e[1]/max)}%;background:var(--goud)"></div></div><div style="width:26px;text-align:right;font-size:12px;color:var(--grijs)">${e[1]}×</div></div>`).join(''):'<div class="kaart"><div class="center">Nog niemand ingetekend.</div></div>')+
       `<div class="mini" style="margin-top:10px">"Wie staat nog op nul" per gezin volgt zodra de contactgegevens gekoppeld zijn.</div>`;
   }
