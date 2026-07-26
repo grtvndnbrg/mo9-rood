@@ -144,11 +144,16 @@ const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence);
 
 const VAPID_KEY = "BGtOrzYSJsN2FDnm40IuA3ptoJae-6sjnipewZPtAveIWMgzpFctfdocXrmwT3K-WyllgMFVps-iqjFS6uctL3Y";
-const NOTIF_TYPES = [
-  ["bericht","Nieuwe berichten","Een melding zodra er een mededeling wordt geplaatst."],
-  ["afmeld","Aanwezigheid-herinnering","Herinnering als je nog niet hebt aangegeven of je kind komt."],
-  ["taak","Taak-herinnering","Herinnering de dag ervóór als je rijdt, fluit of eten meeneemt."],
-  ["carpool","Wijziging in je rit","Melding als de auto-indeling van je kind verandert."]
+const NOTIF_GROUPS = [
+  ["Berichten", [
+    ["bericht_belangrijk","Belangrijke mededelingen","Als de teammanager iets als ‘belangrijk’ markeert."],
+    ["bericht_gewoon","Gewone berichten","Overige mededelingen en updates in de app."]
+  ]],
+  ["Herinneringen", [
+    ["afmeld","Aanwezigheid-herinnering","Als je nog niet hebt doorgegeven of je kind komt."],
+    ["taak","Taak-herinnering","De dag ervóór als je rijdt, fluit of eten meeneemt."],
+    ["carpool","Wijziging in je rit","Als de auto-indeling van je kind verandert."]
+  ]]
 ];
 
 const el = document.getElementById("app");
@@ -323,16 +328,16 @@ async function viewInstellingen(){
       <p class="mini" style="margin:6px 0 10px">Krijg een seintje bij nieuwe berichten en herinneringen. Je kiest hieronder zelf welke.</p>
       <button class="knop" id="pushon">Meldingen aanzetten op dit toestel</button><div id="pushmsg"></div></div>`;
   }
-  const rowsHtml = NOTIF_TYPES.map(([k,titel,uitleg])=>{
+  const rowFor=([k,titel,uitleg])=>{
     const on = notif[k]!==false; // opt-out: standaard aan
     return `<div class="rrow" style="align-items:flex-start"><div class="nm" style="flex:1"><div style="font-weight:600;font-size:14px">${titel}</div><div class="mini" style="margin-top:2px">${uitleg}</div></div>
       <button data-toggle="${k}" role="switch" aria-checked="${on}" style="flex:none;width:46px;height:27px;border-radius:20px;border:none;cursor:pointer;position:relative;transition:background .15s;background:${on?'var(--groen)':'#cfccc4'}">
         <span style="position:absolute;top:3px;left:${on?'22px':'3px'};width:21px;height:21px;border-radius:50%;background:#fff;transition:left .15s"></span></button></div>`;
-  }).join("");
+  };
+  const groupsHtml = NOTIF_GROUPS.map(([kop,items])=>`<div class="kaart" style="margin-top:12px"><div style="font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grijs);margin-bottom:6px">${kop}</div>${items.map(rowFor).join("")}</div>`).join("");
   document.getElementById("ibody").innerHTML=`${statusBox}
-    <div class="kaart" style="margin-top:12px"><div style="font-size:13px;font-weight:600;margin-bottom:4px">Welke meldingen wil je?</div>
-      <p class="mini" style="margin:0 0 8px">Standaard staat alles aan. Zet uit wat je niet wilt — geldt voor al je toestellen.</p>
-      ${rowsHtml}</div>
+    <p class="mini" style="margin:12px 2px 0">Standaard staat alles aan. Zet uit wat je niet wilt — geldt voor al je toestellen.</p>
+    ${groupsHtml}
     <p class="mini" style="margin-top:10px">${iOS&&!standalone?'Tip iPhone: zet de app eerst op je beginscherm voor meldingen.':'Je kunt dit later altijd aanpassen.'}</p>`;
   const on=document.getElementById("pushon");
   if(on)on.onclick=async()=>{ on.disabled=true; on.textContent="Even geduld…"; const r=await enablePush();
