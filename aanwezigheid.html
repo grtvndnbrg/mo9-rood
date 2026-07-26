@@ -14,7 +14,7 @@
   :root{
     --rood:#A32D2D;--rood-donker:#791F1F;--rood-licht:#FCEBEB;
     --zwart:#1a1a1a;--goud:#E3A72E;
-    --groen:#97C459;--groen-donker:#173404;--groen-rand:#639922;
+    --groen:#639922;--groen-tekst:#fff;
     --groen-licht:#EAF3DE;--groen-licht-tekst:#3B6D11;--groen-licht-rand:#C0DD97;
     --rood-chip:#F09595;--rood-chip-tekst:#501313;--rood-chip-rand:#E24B4A;
     --tekst:#1c1c1c;--grijs:#5f5f5f;--lichtgrijs:#8a8a8a;
@@ -35,7 +35,9 @@
   h2{font-size:15px;font-weight:600;margin:20px 0 10px}
   h2:first-child{margin-top:4px}
   .kaart{background:var(--vlak);border:1px solid var(--lijn);border-radius:14px;padding:14px 15px;margin-bottom:12px}
-  input,select{width:100%;padding:11px 12px;border:1px solid var(--lijn);border-radius:9px;font-size:15px;background:#fff;color:var(--tekst);margin-top:8px;font-family:inherit}
+  .kaart.afg{opacity:.6}
+  input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--lijn);border-radius:9px;font-size:15px;background:#fff;color:var(--tekst);margin-top:8px;font-family:inherit}
+  textarea{min-height:120px;resize:vertical}
   label.veldlbl{font-size:12px;color:var(--grijs);margin-top:10px;display:block}
   .knop{display:inline-block;width:100%;background:var(--rood);color:#fff;border:none;border-radius:9px;padding:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;text-align:center;text-decoration:none}
   .knop.grijs{background:#eceae5;color:#333}
@@ -52,30 +54,32 @@
   .info .titel{font-size:15px;font-weight:600}
   .info .sub{font-size:13px;color:var(--grijs)}
   .pijl{color:var(--lichtgrijs)}
+  .tag-afg{font-size:11px;background:#e2ded7;color:#6b6b6b;padding:2px 8px;border-radius:20px;margin-left:6px}
   .tel{display:flex;gap:8px;margin-top:12px;font-size:12px;flex-wrap:wrap}
   .tel span{padding:3px 9px;border-radius:20px}
-  .tel .g{background:var(--groen);color:var(--groen-donker)}
-  .tel .r{background:var(--rood-chip);color:var(--rood-chip-tekst)}
+  .tel .g{background:var(--groen);color:#fff}
   .tel .n{background:var(--groen-licht);color:var(--groen-licht-tekst);border:1px solid var(--groen-licht-rand)}
+  .tel .r{background:var(--rood-chip);color:var(--rood-chip-tekst)}
   .mij{margin-top:12px;padding-top:12px;border-top:1px solid var(--lijn)}
   .mij .lbl{font-size:12px;color:var(--grijs);margin-bottom:8px}
   .kies{display:flex;gap:8px}
   .kies button{flex:1;padding:10px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--lijn);background:#fff;color:var(--grijs)}
-  .kies button.aan-in{background:var(--groen);color:var(--groen-donker);border-color:var(--groen-rand)}
+  .kies button.aan-in{background:var(--groen);color:#fff;border-color:var(--groen)}
   .kies button.aan-out{background:var(--rood-chip);color:var(--rood-chip-tekst);border-color:var(--rood-chip-rand)}
+  .door{font-size:11px;color:var(--lichtgrijs);margin-top:6px}
   .roster-toggle{font-size:13px;color:var(--rood);cursor:pointer;margin-top:12px;display:inline-block}
   .roster{margin-top:10px;border-top:1px solid var(--lijn)}
   .rrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--lijn)}
   .rrow:last-child{border-bottom:none}
   .rrow .nm{flex:1;font-size:14px;font-weight:500}
   .chip{font-size:11px;padding:4px 10px;border-radius:20px;white-space:nowrap}
-  .chip.in{background:var(--groen);color:var(--groen-donker)}
+  .chip.in{background:var(--groen);color:#fff}
   .chip.out{background:var(--rood-chip);color:var(--rood-chip-tekst)}
   .chip.none{background:var(--groen-licht);color:var(--groen-licht-tekst);border:1px solid var(--groen-licht-rand)}
   .mini{font-size:12px;color:var(--grijs);margin-top:2px}
   .verif{display:flex;gap:6px;align-items:center}
   .verif button{padding:5px 9px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid var(--lijn);background:#fff;color:var(--grijs)}
-  .verif button.on-in{background:var(--groen);color:var(--groen-donker);border-color:var(--groen-rand)}
+  .verif button.on-in{background:var(--groen);color:#fff;border-color:var(--groen)}
   .verif button.on-out{background:var(--rood-chip);color:var(--rood-chip-tekst);border-color:var(--rood-chip-rand)}
   .afw{font-size:10px;color:#854F0B;background:#FAEEDA;padding:3px 7px;border-radius:20px;white-space:nowrap}
   .center{text-align:center;color:var(--lichtgrijs);padding:24px;font-size:14px}
@@ -88,13 +92,15 @@
   nav.tabbar button{flex:1;background:none;border:none;padding:9px 0 8px;color:var(--lichtgrijs);cursor:pointer;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px}
   nav.tabbar button .ic{font-size:20px;line-height:1}
   nav.tabbar button.on{color:var(--rood);font-weight:600}
+  .legenda{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--grijs);margin:2px 0 10px}
+  .legenda span span{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:0;margin-right:3px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <img src="https://lirp.cdn-website.com/dfcb1f77/dms3rep/multi/opt/HCSLOGO-400h.png" alt="HCS">
-    <div class="t"><div class="k">HC Schiedam</div><h1 id="htitel">MO9 Rood</h1></div>
+    <div class="t"><div class="k">HC Schiedam</div><h1>MO9 Rood</h1></div>
     <button class="uit" id="uitknop" style="display:none" onclick="doUit()">Uitloggen</button>
   </header>
   <main id="app"><div class="center">Laden…</div></main>
@@ -108,7 +114,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   GoogleAuthProvider, signInWithPopup, signOut, setPersistence, browserLocalPersistence }
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc,
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc,
   onSnapshot, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -138,16 +144,18 @@ setPersistence(auth, browserLocalPersistence);
 const el = document.getElementById("app");
 const uitknop = document.getElementById("uitknop");
 const tabbar = document.getElementById("tabbar");
-let ME=null, MYUSER=null, PLAYERS=[], TAB="agenda", biometricOk=false;
+let ME=null, MYUSER=null, PLAYERS=[], TAB="agenda";
 let unsub=[];
 const clearSubs=()=>{unsub.forEach(u=>{try{u()}catch(e){}}); unsub=[];};
 
 window.doUit=()=>signOut(auth);
 const isAdmin=()=> ME && ADMINS.includes((ME.email||"").toLowerCase());
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const val=id=>document.getElementById(id).value.trim();
+const slug=s=>(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"x";
 
 onAuthStateChanged(auth, async user=>{
-  ME=user; biometricOk=false;
+  ME=user;
   uitknop.style.display=user?"block":"none";
   tabbar.style.display="none";
   clearSubs();
@@ -188,29 +196,31 @@ function renderRegister(){
   document.getElementById("reg").onclick=async()=>{try{await createUserWithEmailAndPassword(auth,val("em"),val("pw"));}catch(e){fout(e);}};
   document.getElementById("terug").onclick=renderLogin;
 }
-const val=id=>document.getElementById(id).value.trim();
 function fout(e){const f=document.getElementById("fout");if(!f)return;
   const m={"auth/invalid-credential":"E-mail of wachtwoord klopt niet.","auth/invalid-email":"Ongeldig e-mailadres.",
     "auth/weak-password":"Wachtwoord te kort (min. 6 tekens).","auth/email-already-in-use":"Er bestaat al een account met dit e-mailadres.",
     "auth/popup-closed-by-user":"Inloggen geannuleerd."}[e.code]||e.message;
   f.className="fout";f.textContent=m;}
 
-// ---------- ONBOARDING ----------
+// ---------- ONBOARDING (met ouder-naam, co-ouderschap) ----------
 async function renderOnboarding(){
   await loadPlayers();
   el.innerHTML=`
-    <h2>Wie is jouw dochter?</h2>
+    <h2>Koppel je account</h2>
     <div class="kaart">
-      <p class="mini">Koppel je account aan je dochter, zodat je haar kunt aan- en afmelden.</p>
+      <p class="mini">Vul je naam in en kies je dochter. Twee ouders mogen aan hetzelfde kind koppelen — jullie kunnen dan allebei aan- en afmelden.</p>
+      <label class="veldlbl">Jouw naam</label><input id="ounaam" placeholder="Voor- en achternaam">
+      <label class="veldlbl">Je dochter</label>
       <select id="kind"><option value="">— kies —</option>
         ${PLAYERS.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select>
       <button class="knop" id="opslaan">Opslaan</button><div id="fout"></div>
     </div>
     ${PLAYERS.length?"":'<p class="mini" style="text-align:center">De teamlijst is nog niet ingesteld. Vraag de teammanager om dit te doen.</p>'}`;
   document.getElementById("opslaan").onclick=async()=>{
-    const pid=document.getElementById("kind").value; if(!pid)return;
-    try{ await setDoc(doc(db,"users",ME.uid),{playerId:pid,email:ME.email,ts:serverTimestamp()});
-      MYUSER={playerId:pid,email:ME.email}; buildTabbar(); TAB="agenda"; route();
+    const naam=val("ounaam"), pid=document.getElementById("kind").value;
+    if(!naam||!pid){document.getElementById("fout").className="fout";document.getElementById("fout").textContent="Vul je naam in en kies je dochter.";return;}
+    try{ await setDoc(doc(db,"users",ME.uid),{playerId:pid,email:ME.email,name:naam,ts:serverTimestamp()});
+      MYUSER={playerId:pid,email:ME.email,name:naam}; buildTabbar(); TAB="agenda"; route();
     }catch(e){fout(e);}
   };
 }
@@ -221,26 +231,21 @@ async function loadPlayers(){
 
 // ---------- NAV ----------
 function buildTabbar(){
-  const tabs=[["agenda","ti","Agenda","calendar"],["aanmelden","ti","Aanmelden","checkbox"],["team","ti","Team","users"]];
-  if(isAdmin()) tabs.push(["beheer","ti","Beheer","settings"]);
+  const tabs=[["agenda","📅","Agenda"],["aanmelden","✅","Aanmelden"],["diensten","🚗","Diensten"],["team","👥","Team"]];
+  if(isAdmin()) tabs.push(["beheer","⚙️","Beheer"]);
   tabbar.style.display="flex";
-  tabbar.innerHTML=tabs.map(t=>`<button data-tab="${t[0]}" class="${TAB===t[0]?'on':''}">
-    <span class="ic">${icon(t[3])}</span>${t[2]}</button>`).join("");
+  tabbar.innerHTML=tabs.map(t=>`<button data-tab="${t[0]}" class="${TAB===t[0]?'on':''}"><span class="ic">${t[1]}</span>${t[2]}</button>`).join("");
   tabbar.querySelectorAll("button").forEach(b=>b.onclick=()=>{TAB=b.dataset.tab; buildTabbar(); route();});
 }
-function icon(n){const m={
-  calendar:'📅',checkbox:'✅',users:'👥',settings:'⚙️'};return m[n]||'•';}
-
 function route(){
-  clearSubs();
-  window.scrollTo(0,0);
+  clearSubs(); window.scrollTo(0,0);
   if(TAB==="agenda") viewAgenda();
   else if(TAB==="aanmelden") viewAanmelden();
+  else if(TAB==="diensten") viewDiensten();
   else if(TAB==="team") viewTeam();
   else if(TAB==="beheer") viewBeheer();
 }
 
-// activities stream (upcoming by default)
 function activityStream(cb, includePast=false){
   const q=query(collection(db,"activities"),orderBy("date"));
   return onSnapshot(q,snap=>{
@@ -261,6 +266,7 @@ function titel(a){
   if(a.opponent){ const tu=a.homeAway?a.homeAway+' vs. ':''; return esc(tu+a.opponent); }
   return esc(a.title||"Activiteit");
 }
+function fmtTs(ts){ try{const d=ts.toDate?ts.toDate():new Date(ts);return `${d.getDate()} ${MAAND[d.getMonth()]} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;}catch(e){return"";} }
 
 // ---------- AGENDA ----------
 function viewAgenda(){
@@ -270,27 +276,26 @@ function viewAgenda(){
   const bind=()=>{clearSubs(); const u=activityStream(acts=>{
       const L=document.getElementById("lijst"); if(!L)return;
       if(!acts.length){L.innerHTML=`<div class="kaart"><div class="center">Geen activiteiten.${isAdmin()?' Voeg er een toe onder Beheer.':''}</div></div>`;return;}
-      const shown = past? acts.slice().reverse(): acts;
-      L.innerHTML=shown.map(a=>`<div class="kaart"><div class="rij-item" data-id="${a.id}">
+      const shown=past?acts.slice().reverse():acts;
+      L.innerHTML=shown.map(a=>`<div class="kaart ${a.cancelled?'afg':''}"><div class="rij-item" data-id="${a.id}">
         <div class="datum"><div class="d">${new Date(a.date).getDate()}</div><div class="m">${MAAND[new Date(a.date).getMonth()]}</div></div>
-        <div class="info"><div class="titel">${titel(a)}</div><div class="sub">${subline(a)}</div></div>
+        <div class="info"><div class="titel">${titel(a)}${a.cancelled?'<span class="tag-afg">Afgelast</span>':''}</div><div class="sub">${subline(a)}</div></div>
         <span class="pijl">›</span></div></div>`).join("");
       L.querySelectorAll("[data-id]").forEach(r=>r.onclick=()=>viewActivity(r.dataset.id));
     }, past); unsub.push(u);};
   bind();
-  document.getElementById("togpast").onclick=(e)=>{past=!past; e.target.textContent=past?"Toon alleen komende":"Toon eerdere activiteiten"; bind();};
+  document.getElementById("togpast").onclick=(e)=>{past=!past;e.target.textContent=past?"Toon alleen komende":"Toon eerdere activiteiten";bind();};
 }
-
 async function viewActivity(id){
   clearSubs();
   const snap=await getDoc(doc(db,"activities",id));
   if(!snap.exists()){viewAgenda();return;}
   const a={id,...snap.data()};
   const d=new Date(a.date);
-  const mapQ = (a.homeAway==='Uit'&&a.location)? a.location : THUISADRES;
+  const mapQ=(a.homeAway==='Uit'&&a.location)?a.location:THUISADRES;
   el.innerHTML=`
     <span class="terug" id="terug">‹ Agenda</span>
-    <div class="detail-kop">${titel(a)}</div>
+    <div class="detail-kop">${titel(a)}${a.cancelled?'<span class="tag-afg">Afgelast</span>':''}</div>
     <div class="mini">${DAGVOL[d.getDay()]} ${d.getDate()} ${MAAND[d.getMonth()]} ${d.getFullYear()}</div>
     <div class="kaart" style="margin-top:14px">
       ${a.time?row("Tijd",esc(a.time)):""}
@@ -301,50 +306,51 @@ async function viewActivity(id){
     </div>
     <a class="knop uitlijn" id="ics">In mijn agenda zetten</a>
     <a class="knop grijs" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(mapQ)}">Route in Google Maps</a>
+    ${isAdmin()?`<a class="knop grijs" id="afgelast">${a.cancelled?'Afgelast ongedaan maken':'Markeer als afgelast'}</a>`:""}
     <div id="rsvpbox"></div>`;
   document.getElementById("terug").onclick=()=>{TAB="agenda";buildTabbar();route();};
   document.getElementById("ics").onclick=(e)=>{e.preventDefault();downloadICS(a);};
-  // rsvp box for my child
-  if(MYUSER&&MYUSER.playerId){
+  if(isAdmin()){document.getElementById("afgelast").onclick=async(e)=>{e.preventDefault();
+    try{await updateDoc(doc(db,"activities",id),{cancelled:!a.cancelled});viewActivity(id);}catch(err){alert(err.message);}};}
+  if(!a.cancelled && MYUSER && MYUSER.playerId){
     const box=document.getElementById("rsvpbox");
     const u=onSnapshot(doc(db,"activities",id,"rsvp",MYUSER.playerId),ds=>{
-      const st=ds.exists()?ds.data().status:'none';
+      const data=ds.exists()?ds.data():null; const st=data?data.status:'none';
       const p=PLAYERS.find(x=>x.id===MYUSER.playerId);
-      box.innerHTML=`<div class="mij"><div class="lbl">${p?esc(p.name):'Mijn dochter'} — ben je erbij?</div>
+      box.innerHTML=`<div class="mij"><div class="lbl">${p?esc(p.name):'Mijn dochter'} — ben je erbij? <span class="mini">(geen keuze = we gaan uit van aanwezig)</span></div>
         <div class="kies"><button class="${st==='in'?'aan-in':''}" data-s="in">Aanwezig</button>
-        <button class="${st==='out'?'aan-out':''}" data-s="out">Afwezig</button></div></div>`;
+        <button class="${st==='out'?'aan-out':''}" data-s="out">Afmelden</button></div>
+        ${data&&data.by?`<div class="door">Laatst gewijzigd door ${esc(data.by)}${data.ts?' · '+fmtTs(data.ts):''}</div>`:''}</div>`;
       box.querySelectorAll("button").forEach(b=>b.onclick=()=>zetRsvp(id,MYUSER.playerId,b.dataset.s));
     });
     unsub.push(u);
   }
 }
 function row(l,v){return `<div class="detail-r"><div class="l">${l}</div><div>${v}</div></div>`;}
-
 function downloadICS(a){
-  const dt=a.date.replace(/-/g,"");
-  let dtstart, dtend;
-  if(a.time){
-    const hm=a.time.replace(":","");
-    dtstart="DTSTART:"+dt+"T"+hm+"00";
-    let [h,m]=a.time.split(":").map(Number); let end=h*60+m+105;
-    const eh=String(Math.floor(end/60)%24).padStart(2,"0"), em=String(end%60).padStart(2,"0");
-    dtend="DTEND:"+dt+"T"+eh+em+"00";
-  } else { dtstart="DTSTART;VALUE=DATE:"+dt; dtend="DTEND;VALUE=DATE:"+dt; }
+  const dt=a.date.replace(/-/g,"");let dtstart,dtend;
+  if(a.time){const hm=a.time.replace(":","");dtstart="DTSTART:"+dt+"T"+hm+"00";
+    let [h,m]=a.time.split(":").map(Number);let end=h*60+m+105;
+    dtend="DTEND:"+dt+"T"+String(Math.floor(end/60)%24).padStart(2,"0")+String(end%60).padStart(2,"0")+"00";
+  }else{dtstart="DTSTART;VALUE=DATE:"+dt;dtend="DTEND;VALUE=DATE:"+dt;}
   const loc=(a.location||THUISADRES).replace(/,/g,"\\,");
-  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//MO9Rood//NL","BEGIN:VEVENT",
-    "UID:"+a.id+"@mo9rood","DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z",
-    dtstart,dtend,"SUMMARY:MO9 Rood — "+(a.opponent?(a.homeAway+" vs. "+a.opponent):a.title),
-    "LOCATION:"+loc,"END:VEVENT","END:VCALENDAR"].join("\r\n");
-  const blob=new Blob([ics],{type:"text/calendar"});
-  const url=URL.createObjectURL(blob); const link=document.createElement("a");
-  link.href=url; link.download="mo9-"+a.date+".ics"; document.body.appendChild(link); link.click();
-  document.body.removeChild(link); setTimeout(()=>URL.revokeObjectURL(url),2000);
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//MO9Rood//NL","BEGIN:VEVENT","UID:"+a.id+"@mo9rood",
+    "DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z",dtstart,dtend,
+    "SUMMARY:MO9 Rood — "+(a.opponent?(a.homeAway+" vs. "+a.opponent):a.title),"LOCATION:"+loc,"END:VEVENT","END:VCALENDAR"].join("\r\n");
+  const url=URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
+  const link=document.createElement("a");link.href=url;link.download="mo9-"+a.date+".ics";
+  document.body.appendChild(link);link.click();document.body.removeChild(link);setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
 
 // ---------- AANMELDEN ----------
 function viewAanmelden(){
-  el.innerHTML=`<h2>Aanmelden</h2><div id="lijst"><div class="center">Laden…</div></div>`;
+  el.innerHTML=`<h2>Aanmelden</h2>
+    <div class="legenda"><span><span style="background:#639922"></span>bevestigd</span>
+      <span><span style="background:#EAF3DE;border:1px solid #C0DD97"></span>verwacht (geen reactie)</span>
+      <span><span style="background:#F09595"></span>afgemeld</span></div>
+    <div id="lijst"><div class="center">Laden…</div></div>`;
   const u=activityStream(acts=>{
+    acts=acts.filter(a=>!a.cancelled);
     const L=document.getElementById("lijst"); if(!L)return;
     if(!acts.length){L.innerHTML=`<div class="kaart"><div class="center">Geen komende activiteiten.</div></div>`;return;}
     L.innerHTML=acts.map(a=>`<div class="kaart" id="card-${a.id}">
@@ -358,36 +364,38 @@ function viewAanmelden(){
 }
 function bindCard(a){
   const u=onSnapshot(collection(db,"activities",a.id,"rsvp"),snap=>{
-    const map={}; snap.docs.forEach(d=>map[d.id]=d.data().status);
-    let ins=0,outs=0; PLAYERS.forEach(p=>{if(map[p.id]==='in')ins++;else if(map[p.id]==='out')outs++;});
+    const full={}; snap.docs.forEach(d=>full[d.id]=d.data());
+    const stOf=id=>full[id]?full[id].status:'none';
+    let ins=0,outs=0; PLAYERS.forEach(p=>{const s=stOf(p.id);if(s==='in')ins++;else if(s==='out')outs++;});
     const none=PLAYERS.length-ins-outs;
     const tel=document.getElementById("tel-"+a.id);
-    if(tel)tel.innerHTML=`<span class="g">${ins} aanwezig</span><span class="r">${outs} afwezig</span><span class="n">${none} geen reactie</span>`;
+    if(tel)tel.innerHTML=`<span class="g">${ins} bevestigd</span><span class="n">${none} verwacht</span><span class="r">${outs} afgemeld</span>`;
     if(MYUSER&&MYUSER.playerId){
-      const st=map[MYUSER.playerId]||'none'; const p=PLAYERS.find(x=>x.id===MYUSER.playerId);
+      const data=full[MYUSER.playerId]; const st=data?data.status:'none'; const p=PLAYERS.find(x=>x.id===MYUSER.playerId);
       const mij=document.getElementById("mij-"+a.id);
       if(mij){mij.innerHTML=`<div class="mij"><div class="lbl">${p?esc(p.name):'Mijn dochter'} — ben je erbij?</div>
         <div class="kies"><button class="${st==='in'?'aan-in':''}" data-s="in">Aanwezig</button>
-        <button class="${st==='out'?'aan-out':''}" data-s="out">Afwezig</button></div></div>`;
+        <button class="${st==='out'?'aan-out':''}" data-s="out">Afmelden</button></div>
+        ${data&&data.by?`<div class="door">Laatst gewijzigd door ${esc(data.by)}${data.ts?' · '+fmtTs(data.ts):''}</div>`:''}</div>`;
         mij.querySelectorAll("button").forEach(b=>b.onclick=()=>zetRsvp(a.id,MYUSER.playerId,b.dataset.s));}
     }
     const roster=document.getElementById("roster-"+a.id);
-    if(roster&&roster.style.display!=='none') vulRoster(a,map);
+    if(roster&&roster.style.display!=='none') vulRoster(a,full);
     const rt=document.getElementById("rt-"+a.id);
     if(rt)rt.onclick=()=>{const r=document.getElementById("roster-"+a.id);
-      if(r.style.display==='none'){r.style.display='block';vulRoster(a,map);rt.textContent='Verberg ▴';}
+      if(r.style.display==='none'){r.style.display='block';vulRoster(a,full);rt.textContent='Verberg ▴';}
       else{r.style.display='none';rt.textContent='Bekijk wie er komt ▾';}};
   });
   unsub.push(u);
 }
-function vulRoster(a,map){
+function vulRoster(a,full){
   const r=document.getElementById("roster-"+a.id); if(!r)return;
-  r.innerHTML=PLAYERS.map(p=>{const st=map[p.id]||'none';
-    const lab={in:'Aanwezig',out:'Afwezig',none:'Geen reactie'}[st];
-    return `<div class="rrow"><div class="nm">${esc(p.name)}</div><span class="chip ${st}">${lab}</span></div>`;}).join("");
+  r.innerHTML=PLAYERS.map(p=>{const data=full[p.id];const st=data?data.status:'none';
+    const lab={in:'Aanwezig',out:'Afgemeld',none:'Verwacht'}[st];
+    return `<div class="rrow"><div class="nm">${esc(p.name)}${data&&data.by?`<div class="door">door ${esc(data.by)}</div>`:''}</div><span class="chip ${st}">${lab}</span></div>`;}).join("");
 }
 async function zetRsvp(actId,playerId,status){
-  try{await setDoc(doc(db,"activities",actId,"rsvp",playerId),{status,uid:ME.uid,ts:serverTimestamp()});}
+  try{await setDoc(doc(db,"activities",actId,"rsvp",playerId),{status,uid:ME.uid,by:(MYUSER&&MYUSER.name)||ME.email||"",ts:serverTimestamp()});}
   catch(e){alert("Kon niet opslaan: "+e.message);}
 }
 
@@ -398,34 +406,43 @@ async function viewTeam(){
   const L=document.getElementById("lijst");
   if(!PLAYERS.length){L.innerHTML=`<div class="kaart"><div class="center">De teamlijst is nog niet ingesteld.${isAdmin()?' Ga naar Beheer om de speelsters in te laden.':''}</div></div>`;return;}
   L.innerHTML=`<div class="kaart">${PLAYERS.map(p=>`<div class="rrow"><div class="nm">${esc(p.name)}</div></div>`).join("")}</div>
-    <p class="mini">Contactgegevens komen hier later bij (bellen, mailen, adres). Alleen zichtbaar voor ingelogde teamleden.</p>`;
+    <p class="mini">Contactgegevens, rugnummers en verjaardagen komen hier later bij. Alleen zichtbaar voor ingelogde teamleden.</p>`;
 }
 
 // ---------- BEHEER ----------
 async function viewBeheer(){
-  if(!(await biometric())) return;
   el.innerHTML=`
     <h2>Instellen</h2>
     <div class="kaart">
-      <p class="mini">Eenmalig: laad de 11 speelsters en de eerste oefenwedstrijd (29 aug) in. Bestaande gegevens blijven staan.</p>
-      <button class="knop grijs" id="seed">Speelsters &amp; eerste wedstrijd inladen</button><div id="seedmsg"></div>
+      <p class="mini">Eenmalig: laad de 11 speelsters in. Wil je meteen spelen? Laad ook het voorbeeldschema.</p>
+      <button class="knop grijs" id="seed">Speelsters inladen</button>
+      <button class="knop grijs" id="voorbeeld">Voorbeeldschema laden</button>
+      <div id="seedmsg"></div>
     </div>
-    <h2>Nieuwe activiteit</h2>
+    <h2>Speelschema importeren</h2>
     <div class="kaart">
-      <input id="btitel" placeholder="Titel (bijv. Training) of laat leeg bij wedstrijd">
+      <p class="mini">Plak de regels van de club. Eén activiteit per regel, waarden gescheiden door komma, puntkomma of tab:</p>
+      <p class="mini" style="color:var(--lichtgrijs)">datum, tijd, type, tegenstander, thuis/uit, locatie, afgelast</p>
+      <p class="mini" style="color:var(--lichtgrijs)">bijv: 06-09-2026, 09:00, Wedstrijd, HDM, Thuis, , nee</p>
+      <textarea id="imp" placeholder="Plak hier het schema…"></textarea>
+      <button class="knop" id="importeer">Importeren</button><div id="impmsg"></div>
+    </div>
+    <h2>Losse activiteit</h2>
+    <div class="kaart">
+      <input id="btitel" placeholder="Titel (bijv. Training) of leeg bij wedstrijd">
       <label class="veldlbl">Datum</label><input id="bdatum" type="date">
       <label class="veldlbl">Tijd (optioneel)</label><input id="btijd" type="time">
       <label class="veldlbl">Type</label>
       <select id="btype"><option>Wedstrijd</option><option>Oefenwedstrijd</option><option>Training</option><option>Toernooi</option><option>Anders</option></select>
-      <label class="veldlbl">Tegenstander (bij wedstrijd)</label><input id="btegen" placeholder="bijv. Blauw">
+      <label class="veldlbl">Tegenstander</label><input id="btegen" placeholder="bijv. Blauw">
       <label class="veldlbl">Thuis / uit</label>
       <select id="bhome"><option value="">—</option><option>Thuis</option><option>Uit</option></select>
-      <label class="veldlbl">Locatie (bij uit; thuis = Sportpark Harga)</label><input id="bloc" placeholder="adres of veld">
-      <button class="knop" id="btoevoeg">Activiteit toevoegen</button><div id="bfout"></div>
+      <label class="veldlbl">Locatie (bij uit)</label><input id="bloc" placeholder="adres of veld">
+      <button class="knop" id="btoevoeg">Toevoegen</button><div id="bfout"></div>
     </div>
     <h2>Wekelijkse trainingen</h2>
     <div class="kaart">
-      <p class="mini">Zet één keer de vaste trainingsdag en -tijd; de trainingen worden dan tot de einddatum aangemaakt.</p>
+      <p class="mini">Zet één keer de vaste trainingsdag en -tijd; de trainingen worden tot de einddatum aangemaakt.</p>
       <label class="veldlbl">Dag</label>
       <select id="tdag"><option value="1">Maandag</option><option value="2">Dinsdag</option><option value="3">Woensdag</option><option value="4">Donderdag</option><option value="5">Vrijdag</option><option value="6">Zaterdag</option><option value="0">Zondag</option></select>
       <label class="veldlbl">Tijd</label><input id="ttijd" type="time" value="18:00">
@@ -434,15 +451,18 @@ async function viewBeheer(){
       <button class="knop grijs" id="tgen">Trainingen aanmaken</button><div id="tmsg"></div>
     </div>
     <h2>Geverifieerde opkomst</h2>
-    <p class="mini" style="margin-bottom:8px">Zet per speler de échte opkomst. Een afwijking t.o.v. de bevestiging wordt gemarkeerd.</p>
+    <p class="mini" style="margin-bottom:8px">Zet per speler de échte opkomst. Een afwijking t.o.v. de verwachting wordt gemarkeerd.</p>
     <div id="verifwrap"><div class="center">Laden…</div></div>
     <a class="knop grijs" id="trendknop">Bekijk trends ›</a>`;
   document.getElementById("seed").onclick=doSeed;
+  document.getElementById("voorbeeld").onclick=doVoorbeeld;
+  document.getElementById("importeer").onclick=doImport;
   document.getElementById("btoevoeg").onclick=doAddActivity;
   document.getElementById("tgen").onclick=doGenTrainings;
   document.getElementById("trendknop").onclick=(e)=>{e.preventDefault();openTrends();};
   const u=activityStream(acts=>{
     const w=document.getElementById("verifwrap"); if(!w)return;
+    acts=acts.filter(a=>!a.cancelled);
     if(!acts.length){w.innerHTML=`<div class="kaart"><div class="center">Nog geen activiteiten.</div></div>`;return;}
     w.innerHTML=acts.map(a=>`<div class="kaart"><div class="info"><div class="titel">${titel(a)}</div><div class="sub">${subline(a)}</div></div>
       <div id="vlist-${a.id}" style="margin-top:10px"></div></div>`).join("");
@@ -452,37 +472,70 @@ async function viewBeheer(){
 }
 async function doSeed(){
   const m=document.getElementById("seedmsg");
-  try{
-    const ps=await getDocs(collection(db,"players"));
+  try{const ps=await getDocs(collection(db,"players"));
     if(ps.empty){for(let i=0;i<SPELERS.length;i++){await setDoc(doc(db,"players","p"+(i+1)),{name:SPELERS[i]});}}
-    const as=await getDocs(collection(db,"activities"));
-    if(as.empty){await setDoc(doc(collection(db,"activities")),{title:"Oefenwedstrijd",date:"2026-08-29",type:"Oefenwedstrijd",ts:serverTimestamp()});}
-    m.className="meld";m.textContent="Klaar — speelsters en activiteit staan klaar."; await loadPlayers();
+    m.className="meld";m.textContent="Speelsters staan klaar."; await loadPlayers();
+  }catch(e){m.className="fout";m.textContent=e.message;}
+}
+async function doVoorbeeld(){
+  const m=document.getElementById("seedmsg");
+  const ex=[
+    {date:"2026-08-29",time:"",type:"Oefenwedstrijd",opponent:"",homeAway:"",location:""},
+    {date:"2026-09-06",time:"09:00",type:"Wedstrijd",opponent:"HDM",homeAway:"Thuis",location:""},
+    {date:"2026-09-13",time:"10:30",type:"Wedstrijd",opponent:"Leonidas",homeAway:"Uit",location:"Toepad 5, Rotterdam"},
+    {date:"2026-09-20",time:"09:00",type:"Wedstrijd",opponent:"Victoria",homeAway:"Thuis",location:""},
+    {date:"2026-09-27",time:"11:00",type:"Wedstrijd",opponent:"Spirit",homeAway:"Uit",location:"Sportlaan 1, Delft",cancelled:true}
+  ];
+  try{for(const a of ex){const id="imp-"+a.date+"-"+slug(a.opponent||a.type);
+      await setDoc(doc(db,"activities",id),{title:a.opponent?"Wedstrijd":a.type,...a,ts:serverTimestamp()});}
+    m.className="meld";m.textContent="Voorbeeldschema geladen (met één afgelaste wedstrijd om te tonen).";
+  }catch(e){m.className="fout";m.textContent=e.message;}
+}
+function normDate(s){s=s.trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+  const m=s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+  if(m)return `${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;
+  return "";
+}
+async function doImport(){
+  const m=document.getElementById("impmsg"); const txt=document.getElementById("imp").value.trim();
+  if(!txt){m.className="fout";m.textContent="Plak eerst het schema.";return;}
+  const lines=txt.split(/\r?\n/).filter(l=>l.trim());
+  let n=0,skip=0;
+  try{
+    for(const line of lines){
+      const c=line.split(/[;\t,]/).map(x=>x.trim());
+      if(/datum/i.test(c[0])){continue;}
+      const date=normDate(c[0]||""); if(!date){skip++;continue;}
+      const time=c[1]||"", type=c[2]||"Wedstrijd", opp=c[3]||"", home=c[4]||"", loc=c[5]||"";
+      const cancelled=/^(ja|j|x|true|afgelast)$/i.test(c[6]||"");
+      const id="imp-"+date+"-"+slug(opp||type);
+      await setDoc(doc(db,"activities",id),{title:opp?"Wedstrijd":type,date,time,type,opponent:opp,homeAway:home,location:loc,cancelled,ts:serverTimestamp()});
+      n++;
+    }
+    m.className="meld";m.textContent=`${n} activiteiten geïmporteerd${skip?`, ${skip} regels overgeslagen (datum onduidelijk)`:""}.`;
+    document.getElementById("imp").value="";
   }catch(e){m.className="fout";m.textContent=e.message;}
 }
 async function doAddActivity(){
   const f=document.getElementById("bfout");
-  const t=val("btitel"), d=val("bdatum"), tijd=val("btijd"), type=document.getElementById("btype").value,
-    teg=val("btegen"), home=document.getElementById("bhome").value, loc=val("bloc");
+  const t=val("btitel"),d=val("bdatum"),tijd=val("btijd"),type=document.getElementById("btype").value,
+    teg=val("btegen"),home=document.getElementById("bhome").value,loc=val("bloc");
   if(!d){f.className="fout";f.textContent="Datum is verplicht.";return;}
-  const title = t || (teg? "Wedstrijd" : type);
-  try{ await setDoc(doc(collection(db,"activities")),{title,date:d,time:tijd||"",type,opponent:teg||"",homeAway:home||"",location:loc||"",ts:serverTimestamp()});
+  try{await setDoc(doc(collection(db,"activities")),{title:t||(teg?"Wedstrijd":type),date:d,time:tijd||"",type,opponent:teg||"",homeAway:home||"",location:loc||"",cancelled:false,ts:serverTimestamp()});
     ["btitel","btegen","bloc"].forEach(id=>document.getElementById(id).value="");
     f.className="meld";f.textContent="Toegevoegd.";
   }catch(e){f.className="fout";f.textContent=e.message;}
 }
 async function doGenTrainings(){
   const m=document.getElementById("tmsg");
-  const wd=+document.getElementById("tdag").value, tijd=val("ttijd"), van=val("tvan"), tot=val("ttot");
+  const wd=+document.getElementById("tdag").value,tijd=val("ttijd"),van=val("tvan"),tot=val("ttot");
   if(!van||!tot){m.className="fout";m.textContent="Vul een begin- en einddatum in.";return;}
-  try{
-    let d=new Date(van), end=new Date(tot), n=0;
-    while(d.getDay()!==wd){ d.setDate(d.getDate()+1); }
-    while(d<=end && n<60){
-      const ds=d.toISOString().slice(0,10);
-      await setDoc(doc(db,"activities","train-"+ds),{title:"Training",date:ds,time:tijd||"",type:"Training",opponent:"",homeAway:"",location:"",ts:serverTimestamp()});
-      n++; d.setDate(d.getDate()+7);
-    }
+  try{let d=new Date(van),end=new Date(tot),n=0;
+    while(d.getDay()!==wd){d.setDate(d.getDate()+1);}
+    while(d<=end&&n<60){const ds=d.toISOString().slice(0,10);
+      await setDoc(doc(db,"activities","train-"+ds),{title:"Training",date:ds,time:tijd||"",type:"Training",opponent:"",homeAway:"",location:"",cancelled:false,ts:serverTimestamp()});
+      n++;d.setDate(d.getDate()+7);}
     m.className="meld";m.textContent=n+" trainingen aangemaakt.";
   }catch(e){m.className="fout";m.textContent=e.message;}
 }
@@ -493,8 +546,9 @@ function bindVerif(a){
       const amap={};asnap.docs.forEach(d=>amap[d.id]=d.data().present);
       const list=document.getElementById("vlist-"+a.id); if(!list)return;
       list.innerHTML=PLAYERS.map(p=>{const rv=rmap[p.id]||'none',av=amap[p.id];
-        const mis=(av!==undefined)&&((rv==='in'&&av===false)||(rv!=='in'&&av===true));
-        return `<div class="rrow"><div class="nm">${esc(p.name)}<div class="mini">bevestigd: ${{in:'aanwezig',out:'afwezig',none:'geen reactie'}[rv]}</div></div>
+        const verwacht=(rv!=='out');
+        const mis=(av!==undefined)&&((verwacht&&av===false)||(!verwacht&&av===true));
+        return `<div class="rrow"><div class="nm">${esc(p.name)}<div class="mini">verwacht: ${verwacht?'aanwezig':'afgemeld'}</div></div>
           <div class="verif"><button class="${av===true?'on-in':''}" data-p="${p.id}" data-v="1">Was er</button>
           <button class="${av===false?'on-out':''}" data-p="${p.id}" data-v="0">Niet</button>
           ${mis?'<span class="afw">afwijking</span>':''}</div></div>`;}).join("");
@@ -512,26 +566,123 @@ async function openTrends(){
   document.getElementById("terug").onclick=()=>{TAB="beheer";buildTabbar();route();};
   await loadPlayers();
   const asnap=await getDocs(query(collection(db,"activities"),orderBy("date")));
-  const acts=asnap.docs.map(d=>({id:d.id,...d.data()}));
-  const stat={};PLAYERS.forEach(p=>stat[p.id]={tot:acts.length,geen:0,verifTot:0,verifAan:0,noshow:0});
+  const acts=asnap.docs.map(d=>({id:d.id,...d.data()})).filter(a=>!a.cancelled);
+  const stat={};PLAYERS.forEach(p=>stat[p.id]={tot:acts.length,afg:0,verifTot:0,verifAan:0,noshow:0});
   for(const a of acts){
-    const rs=await getDocs(collection(db,"activities",a.id,"rsvp")); const rmap={};rs.docs.forEach(d=>rmap[d.id]=d.data().status);
-    const as=await getDocs(collection(db,"activities",a.id,"actual")); const amap={};as.docs.forEach(d=>amap[d.id]=d.data().present);
-    PLAYERS.forEach(p=>{const rv=rmap[p.id]||'none';
-      if(rv==='none')stat[p.id].geen++;
-      if(amap[p.id]!==undefined){stat[p.id].verifTot++;if(amap[p.id])stat[p.id].verifAan++;if(rv==='in'&&amap[p.id]===false)stat[p.id].noshow++;}});
+    const rs=await getDocs(collection(db,"activities",a.id,"rsvp"));const rmap={};rs.docs.forEach(d=>rmap[d.id]=d.data().status);
+    const as=await getDocs(collection(db,"activities",a.id,"actual"));const amap={};as.docs.forEach(d=>amap[d.id]=d.data().present);
+    PLAYERS.forEach(p=>{const rv=rmap[p.id]||'none';const verwacht=(rv!=='out');
+      if(rv==='out')stat[p.id].afg++;
+      if(amap[p.id]!==undefined){stat[p.id].verifTot++;if(amap[p.id])stat[p.id].verifAan++;if(verwacht&&amap[p.id]===false)stat[p.id].noshow++;}});
   }
   const rows=PLAYERS.map(p=>{const s=stat[p.id];const opk=s.verifTot?Math.round(100*s.verifAan/s.verifTot)+'%':'—';
-    return `<div class="rrow"><div class="nm">${esc(p.name)}<div class="mini">geen reactie: ${s.geen}/${s.tot} · niet gekomen ondanks toezegging: ${s.noshow}</div></div>
+    return `<div class="rrow"><div class="nm">${esc(p.name)}<div class="mini">afgemeld: ${s.afg}/${s.tot} · niet gekomen ondanks verwachting: ${s.noshow}</div></div>
       <span class="chip ${s.verifTot&&s.verifAan/s.verifTot>=0.6?'in':'none'}">opkomst ${opk}</span></div>`;}).join("");
-  document.getElementById("tw").innerHTML=`<div class="kaart">${rows}</div>
-    <p class="mini">Opkomst = geverifieerd aanwezig ÷ geverifieerde activiteiten.</p>`;
+  document.getElementById("tw").innerHTML=`<div class="kaart">${rows}</div><p class="mini">Opkomst = geverifieerd aanwezig ÷ geverifieerde activiteiten.</p>`;
 }
 
-// ---------- BIOMETRISCH SLOT ----------
-async function biometric(){
-  // Biometrisch slot volgt via passkeys (samen met pushmeldingen). Nu geen prompt.
-  return true;
+// ---------- DIENSTEN / CARPOOL ----------
+const CP={dir:"heen",act:null,present:[]};
+let cpSeats=3;
+function viewDiensten(){
+  el.innerHTML=`<h2>Diensten — carpool</h2>
+    <p class="mini" style="margin-bottom:8px">Kies een activiteit om de carpool te regelen (vooral voor uitwedstrijden).</p>
+    <div id="lijst"><div class="center">Laden…</div></div>`;
+  const u=activityStream(acts=>{
+    acts=acts.filter(a=>!a.cancelled);
+    const L=document.getElementById("lijst"); if(!L)return;
+    if(!acts.length){L.innerHTML=`<div class="kaart"><div class="center">Geen komende activiteiten.</div></div>`;return;}
+    L.innerHTML=acts.map(a=>`<div class="kaart"><div class="rij-item" data-cp="${a.id}">
+      <div class="datum"><div class="d">${new Date(a.date).getDate()}</div><div class="m">${MAAND[new Date(a.date).getMonth()]}</div></div>
+      <div class="info"><div class="titel">${titel(a)}</div><div class="sub">${subline(a)}${a.homeAway==='Uit'?' · uit':''}</div></div><span class="pijl">›</span></div></div>`).join("");
+    L.querySelectorAll("[data-cp]").forEach(r=>r.onclick=()=>openCarpool(r.dataset.cp));
+  });
+  unsub.push(u);
+}
+async function openCarpool(actId){
+  clearSubs();
+  const snap=await getDoc(doc(db,"activities",actId));
+  if(!snap.exists()){viewDiensten();return;}
+  CP.act={id:actId,...snap.data()}; CP.dir="heen";
+  await loadPlayers();
+  const rs=await getDocs(collection(db,"activities",actId,"rsvp"));
+  const out={}; rs.docs.forEach(d=>{ if(d.data().status==='out') out[d.id]=1; });
+  CP.present=PLAYERS.filter(p=>!out[p.id]).map(p=>p.name);
+  subscribeCarpool();
+}
+function cpRef(){ return doc(db,"activities",CP.act.id,"carpool",CP.dir); }
+function subscribeCarpool(){
+  clearSubs();
+  const u=onSnapshot(cpRef(), ds=>{
+    const st = ds.exists()
+      ? {cars:(ds.data().cars||[]).map(c=>({id:c.id,fam:c.fam,seats:c.seats,pas:c.pas||[],klaar:!!c.klaar})), los:ds.data().los||[]}
+      : {cars:[], los:CP.present.slice()};
+    drawCarpool(st);
+  });
+  unsub.push(u);
+}
+async function saveCarpool(st){ try{ await setDoc(cpRef(),{cars:st.cars,los:st.los,updated:serverTimestamp()}); }catch(e){ alert("Kon niet opslaan: "+e.message);} }
+function waText(st){ let t=`🚗 Carpool MO9 Rood — ${titel(CP.act)} (${subline(CP.act)})\n${CP.dir==='heen'?'Heenreis':'Terugreis'}\n`;
+  st.cars.forEach(c=>t+=`• ${c.fam} (${c.pas.length}/${c.seats}): ${(c.pas||[]).join(', ')||'—'}${c.klaar?' ✅':''}\n`);
+  if(st.los.length)t+=`Nog in te delen: ${st.los.join(', ')} — wie kan rijden?\n`; return t; }
+function drawCarpool(st){
+  const a=CP.act, dir=CP.dir;
+  const iAm=st.cars.findIndex(c=>c.id===ME.uid);
+  const totVrij=st.cars.reduce((s,c)=>s+(c.seats-c.pas.length),0);
+  const alle=st.cars.length&&st.cars.every(c=>c.klaar)&&!st.los.length;
+  const banner=st.los.length?`<div class="fout">${st.los.length} kind(eren) zonder plek — meld een auto aan of verdeel onderling.</div>`:`<div class="meld">Iedereen heeft een plek ✓ · ${totVrij} stoel(en) over.</div>`;
+  const seg=`<div style="display:flex;background:#f1efe9;border-radius:10px;padding:3px;margin:10px 0 12px"><button id="dh" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='heen'?'#fff':'none'};color:${dir==='heen'?'var(--rood)':'var(--grijs)'}">Heen</button><button id="dt" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='terug'?'#fff':'none'};color:${dir==='terug'?'var(--rood)':'var(--grijs)'}">Terug</button></div>`;
+  const sb='width:26px;height:26px;border:1px solid var(--lijn);background:#fff;border-radius:7px;font-size:16px;cursor:pointer;line-height:1';
+  let zelf;
+  if(iAm<0){ zelf=`<div class="kaart"><b style="font-size:13px">Ik kan rijden</b>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+      <span style="font-size:13px;color:var(--grijs)">Plekken: <button id="sm" style="${sb}">−</button> <b>${cpSeats}</b> <button id="sp" style="${sb}">+</button></span>
+      <button id="aan" class="knop" style="width:auto;margin-top:0;padding:9px 16px">Aanmelden</button></div>
+    <div class="mini" style="margin-top:6px">Reizen er mensen mee? Zet de plekken lager.</div></div>`;
+  } else { zelf=`<div class="kaart" style="background:var(--groen-licht);border-color:var(--groen-licht-rand)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>Jij rijdt mee</b><div class="mini">Pas je plekken aan bij je auto hieronder</div></div><button id="af" class="knop grijs" style="width:auto;margin-top:0;padding:8px 13px">Ik kan toch niet</button></div></div>`; }
+  const cars=st.cars.map((c,ci)=>{const vrij=c.seats-c.pas.length,over=vrij<0,mine=c.id===ME.uid;
+    return `<div class="kaart" style="${over?'border-color:#E24B4A':''}">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1"><b>🚗 ${esc(c.fam)}${mine?' (jij)':''}</b>
+        <div class="mini" style="margin-top:3px">bezet ${c.pas.length} · plekken <button data-sm="${ci}" style="${sb}">−</button> <b>${c.seats}</b> <button data-sp="${ci}" style="${sb}">+</button>${over?' <span style="color:#791F1F">te vol!</span>':(vrij>0?` · ${vrij} vrij`:' · vol')}</div></div>
+        <button data-klaar="${ci}" style="border:1px solid ${c.klaar?'var(--groen)':'var(--lijn)'};background:${c.klaar?'var(--groen)':'#fff'};color:${c.klaar?'#fff':'var(--grijs)'};border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;align-self:flex-start">${c.klaar?'compleet ✓':'compleet?'}</button></div>
+      <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:6px">${c.pas.map(k=>`<span data-move="c${ci}|${esc(k)}" class="chip none" style="cursor:pointer">${esc(k)}</span>`).join('')||'<span class="mini">— leeg —</span>'}</div></div>`;}).join('');
+  const losb=st.los.length?`<div class="kaart" style="border-style:dashed;border-color:#E24B4A"><div class="mini" style="color:#791F1F;font-weight:600;margin-bottom:6px">Nog in te delen — tik om in een auto te zetten</div><div style="display:flex;flex-wrap:wrap;gap:6px">${st.los.map(k=>`<span data-move="los|${esc(k)}" class="chip none" style="cursor:pointer">${esc(k)}</span>`).join('')}</div></div>`:'';
+  el.innerHTML=`<span class="terug" id="terug">‹ Diensten</span>
+    <div class="detail-kop">Carpool — ${titel(a)}</div><div class="mini">${subline(a)}</div>
+    ${alle?'<div class="meld" style="text-align:center;margin-top:10px">✅ Alle auto\\'s compleet — team is onderweg!</div>':''}
+    ${seg}${banner}${zelf}
+    <div class="mini" style="margin:4px 0 8px">${dir==='heen'?'Heenreis':'Terugreis'} · tik een kind om het te verplaatsen</div>
+    ${cars}${losb}
+    <a class="knop" id="wabtn" style="background:#25D366">Kopieer voor WhatsApp</a><div id="wamsg"></div>
+    <div class="mini" style="margin-top:12px;border-top:1px solid var(--lijn);padding-top:9px">Route naar het ophaaladres en de rijbeurten-teller volgen zodra de contactgegevens in de app staan.</div>`;
+  wireCarpool(st);
+}
+function wireCarpool(st){
+  const mut=fn=>{const c=JSON.parse(JSON.stringify(st));fn(c);saveCarpool(c);};
+  document.getElementById("terug").onclick=()=>{clearSubs();viewDiensten();};
+  const dh=document.getElementById("dh"),dt=document.getElementById("dt");
+  if(dh)dh.onclick=()=>{CP.dir='heen';subscribeCarpool();};
+  if(dt)dt.onclick=()=>{CP.dir='terug';subscribeCarpool();};
+  const sm=document.getElementById("sm"),sp=document.getElementById("sp");
+  if(sm)sm.onclick=()=>{cpSeats=Math.max(1,cpSeats-1);drawCarpool(st);};
+  if(sp)sp.onclick=()=>{cpSeats=Math.min(6,cpSeats+1);drawCarpool(st);};
+  const aan=document.getElementById("aan");
+  if(aan)aan.onclick=()=>mut(c=>{c.cars.push({id:ME.uid,fam:(MYUSER&&MYUSER.name)||ME.email||"Ik",seats:cpSeats,pas:[],klaar:false});const car=c.cars[c.cars.length-1];while(c.los.length&&car.pas.length<car.seats)car.pas.push(c.los.shift());});
+  const af=document.getElementById("af");
+  if(af)af.onclick=()=>{if(confirm("Weet je het zeker? Jouw auto valt weg en de kinderen staan zonder plek. Jij zorgt zelf voor vervanging en meldt het in de WhatsApp-groep."))mut(c=>{const i=c.cars.findIndex(x=>x.id===ME.uid);if(i>=0){c.los=c.los.concat(c.cars[i].pas);c.cars.splice(i,1);}});};
+  document.querySelectorAll("[data-sm]").forEach(b=>b.onclick=()=>mut(c=>{const i=+b.dataset.sm;c.cars[i].seats=Math.max(1,c.cars[i].seats-1);}));
+  document.querySelectorAll("[data-sp]").forEach(b=>b.onclick=()=>mut(c=>{const i=+b.dataset.sp;c.cars[i].seats=Math.min(8,c.cars[i].seats+1);}));
+  document.querySelectorAll("[data-klaar]").forEach(b=>b.onclick=()=>mut(c=>{const i=+b.dataset.klaar;c.cars[i].klaar=!c.cars[i].klaar;}));
+  document.querySelectorAll("[data-move]").forEach(x=>x.onclick=()=>mut(c=>{const p=x.dataset.move.split('|');const loc=p[0],k=p.slice(1).join('|');
+    if(loc==='los')c.los=c.los.filter(y=>y!==k);else c.cars[+loc.slice(1)].pas=c.cars[+loc.slice(1)].pas.filter(y=>y!==k);
+    const start=loc==='los'?0:(+loc.slice(1)+1);let pl=false;
+    for(let s=0;s<c.cars.length;s++){const i=(start+s)%c.cars.length;if(c.cars[i].pas.length<c.cars[i].seats){c.cars[i].pas.push(k);pl=true;break;}}
+    if(!pl)c.los.push(k);}));
+  const wb=document.getElementById("wabtn");
+  if(wb)wb.onclick=async(e)=>{e.preventDefault();const t=waText(st);const m=document.getElementById("wamsg");
+    try{await navigator.clipboard.writeText(t);m.className="meld";m.textContent="Gekopieerd — plak het in de WhatsApp-groep.";}
+    catch(err){m.className="meld";m.style.whiteSpace="pre-wrap";m.textContent="Selecteer en kopieer:\n"+t;}};
 }
 </script>
 </body>
