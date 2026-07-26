@@ -117,6 +117,8 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWith
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getMessaging, getToken, onMessage, isSupported, deleteToken }
+  from "https://www.gstatic.com/firebasejs/10.12.5/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBiYoUzcPabkq-3CS7-aopWot-0RcuSdF0",
@@ -141,11 +143,20 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence);
 
+const VAPID_KEY = "BGtOrzYSJsN2FDnm40IuA3ptoJae-6sjnipewZPtAveIWMgzpFctfdocXrmwT3K-WyllgMFVps-iqjFS6uctL3Y";
+const NOTIF_TYPES = [
+  ["bericht","Nieuwe berichten","Een melding zodra er een mededeling wordt geplaatst."],
+  ["afmeld","Aanwezigheid-herinnering","Herinnering als je nog niet hebt aangegeven of je kind komt."],
+  ["taak","Taak-herinnering","Herinnering de dag ervóór als je rijdt, fluit of eten meeneemt."],
+  ["carpool","Wijziging in je rit","Melding als de auto-indeling van je kind verandert."]
+];
+
 const el = document.getElementById("app");
 const uitknop = document.getElementById("uitknop");
 const tabbar = document.getElementById("tabbar");
 let ME=null, MYUSER=null, PLAYERS=[], TAB="agenda";
 let unsub=[];
+let MESSAGING=null, PUSH_SUPPORTED=false;
 const clearSubs=()=>{unsub.forEach(u=>{try{u()}catch(e){}}); unsub=[];};
 
 window.doUit=()=>signOut(auth);
@@ -153,6 +164,46 @@ const isAdmin=()=> ME && ADMINS.includes((ME.email||"").toLowerCase());
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const val=id=>document.getElementById(id).value.trim();
 const slug=s=>(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"x";
+
+// ---------- MELDINGEN (push) ----------
+async function initMessaging(){
+  try{
+    PUSH_SUPPORTED = await isSupported();
+    if(!PUSH_SUPPORTED) return;
+    MESSAGING = getMessaging(app);
+    onMessage(MESSAGING, payload=>{
+      const d = payload.data || payload.notification || {};
+      pushToast(d.title||"MO9 Rood", d.body||"");
+    });
+    // token verversen als toestemming er al is
+    if(typeof Notification!=="undefined" && Notification.permission==="granted"){ registerToken().catch(()=>{}); }
+  }catch(e){ PUSH_SUPPORTED=false; }
+}
+async function registerToken(){
+  const reg = await navigator.serviceWorker.ready;
+  const token = await getToken(MESSAGING, { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+  if(!token) throw new Error("geen token");
+  await setDoc(doc(db,"users",ME.uid), { fcmTokens: { [token]: { ua:(navigator.userAgent||"").slice(0,140), ts:Date.now() } } }, { merge:true });
+  return token;
+}
+async function enablePush(){
+  if(!PUSH_SUPPORTED) return { ok:false, reason:"unsupported" };
+  let perm = Notification.permission;
+  if(perm!=="granted") perm = await Notification.requestPermission();
+  if(perm!=="granted") return { ok:false, reason:perm };
+  try{ await registerToken(); return { ok:true }; }
+  catch(e){ return { ok:false, reason:e.message }; }
+}
+function pushToast(title, body){
+  let t = document.getElementById("pushtoast");
+  if(!t){ t=document.createElement("div"); t.id="pushtoast";
+    t.style.cssText="position:fixed;left:50%;transform:translateX(-50%);bottom:78px;z-index:9999;max-width:340px;width:calc(100% - 32px);background:#1c1c1c;color:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13px;line-height:1.35;cursor:pointer";
+    document.body.appendChild(t);
+    t.onclick=()=>{ t.remove(); };
+  }
+  t.innerHTML=`<b style="display:block;margin-bottom:2px">🔔 ${esc(title)}</b>${esc(body)}`;
+  clearTimeout(t._h); t._h=setTimeout(()=>{ if(t)t.remove(); }, 6000);
+}
 
 onAuthStateChanged(auth, async user=>{
   ME=user;
@@ -163,6 +214,7 @@ onAuthStateChanged(auth, async user=>{
   MYUSER=null;
   try{ const us=await getDoc(doc(db,"users",user.uid)); if(us.exists()) MYUSER=us.data(); }catch(e){}
   if(!isAdmin() && (!MYUSER||!MYUSER.playerId)){ await renderOnboarding(); return; }
+  initMessaging();
   buildTabbar(); TAB="berichten"; route();
 });
 
@@ -245,7 +297,52 @@ function route(){
   else if(TAB==="diensten") viewDiensten();
   else if(TAB==="overzicht") viewOverzicht();
   else if(TAB==="team") viewTeam();
+  else if(TAB==="instellingen") viewInstellingen();
   else if(TAB==="beheer") viewBeheer();
+}
+// ---------- INSTELLINGEN ----------
+async function viewInstellingen(){
+  el.innerHTML=`<span class="terug" id="terug">‹ Team</span><h2>Instellingen</h2><div id="ibody"><div class="center">Laden…</div></div>`;
+  document.getElementById("terug").onclick=()=>{TAB="team";buildTabbar();route();};
+  // verse voorkeuren ophalen
+  let notif={};
+  try{ const us=await getDoc(doc(db,"users",ME.uid)); if(us.exists()){ MYUSER=us.data(); notif=MYUSER.notif||{}; } }catch(e){}
+  const supported = PUSH_SUPPORTED;
+  const perm = (typeof Notification!=="undefined") ? Notification.permission : "unsupported";
+  const iOS = /iP(hone|ad|od)/.test(navigator.userAgent);
+  const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+  let statusBox="";
+  if(!supported){
+    statusBox=`<div class="fout" style="margin-top:0">Meldingen worden niet ondersteund op deze browser.${iOS&&!standalone?' Op de iPhone werkt dit alleen als je de app eerst op je beginscherm zet (deel-knop → “Zet op beginscherm”).':''}</div>`;
+  } else if(perm==="granted"){
+    statusBox=`<div class="meld" style="margin-top:0">Meldingen staan aan op dit toestel ✓</div>`;
+  } else if(perm==="denied"){
+    statusBox=`<div class="fout" style="margin-top:0">Meldingen zijn geblokkeerd. Zet ze aan via de browser-/site-instellingen van dit toestel en herlaad daarna.</div>`;
+  } else {
+    statusBox=`<div class="kaart" style="background:var(--rood-licht);border-color:#F3C7C7"><b style="font-size:14px">🔔 Meldingen aanzetten</b>
+      <p class="mini" style="margin:6px 0 10px">Krijg een seintje bij nieuwe berichten en herinneringen. Je kiest hieronder zelf welke.</p>
+      <button class="knop" id="pushon">Meldingen aanzetten op dit toestel</button><div id="pushmsg"></div></div>`;
+  }
+  const rowsHtml = NOTIF_TYPES.map(([k,titel,uitleg])=>{
+    const on = notif[k]!==false; // opt-out: standaard aan
+    return `<div class="rrow" style="align-items:flex-start"><div class="nm" style="flex:1"><div style="font-weight:600;font-size:14px">${titel}</div><div class="mini" style="margin-top:2px">${uitleg}</div></div>
+      <button data-toggle="${k}" role="switch" aria-checked="${on}" style="flex:none;width:46px;height:27px;border-radius:20px;border:none;cursor:pointer;position:relative;transition:background .15s;background:${on?'var(--groen)':'#cfccc4'}">
+        <span style="position:absolute;top:3px;left:${on?'22px':'3px'};width:21px;height:21px;border-radius:50%;background:#fff;transition:left .15s"></span></button></div>`;
+  }).join("");
+  document.getElementById("ibody").innerHTML=`${statusBox}
+    <div class="kaart" style="margin-top:12px"><div style="font-size:13px;font-weight:600;margin-bottom:4px">Welke meldingen wil je?</div>
+      <p class="mini" style="margin:0 0 8px">Standaard staat alles aan. Zet uit wat je niet wilt — geldt voor al je toestellen.</p>
+      ${rowsHtml}</div>
+    <p class="mini" style="margin-top:10px">${iOS&&!standalone?'Tip iPhone: zet de app eerst op je beginscherm voor meldingen.':'Je kunt dit later altijd aanpassen.'}</p>`;
+  const on=document.getElementById("pushon");
+  if(on)on.onclick=async()=>{ on.disabled=true; on.textContent="Even geduld…"; const r=await enablePush();
+    const m=document.getElementById("pushmsg");
+    if(r.ok){ viewInstellingen(); } else { m.className="fout"; m.textContent = r.reason==="denied"?"Je hebt meldingen geweigerd. Zet ze aan via de site-instellingen.":"Lukte niet: "+r.reason; on.disabled=false; on.textContent="Opnieuw proberen"; } };
+  document.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=async()=>{
+    const k=b.dataset.toggle; const cur=b.getAttribute("aria-checked")==="true"; const next=!cur;
+    b.setAttribute("aria-checked", next); b.style.background=next?"var(--groen)":"#cfccc4"; b.firstElementChild.style.left=next?"22px":"3px";
+    try{ await setDoc(doc(db,"users",ME.uid), { notif: { [k]: next } }, { merge:true }); }catch(e){ alert(e.message); }
+  });
 }
 
 function activityStream(cb, includePast=false){
@@ -404,7 +501,10 @@ async function zetRsvp(actId,playerId,status){
 
 // ---------- TEAM ----------
 async function viewTeam(){
-  el.innerHTML=`<h2>Team</h2><div id="lijst"><div class="center">Laden…</div></div>`;
+  el.innerHTML=`<h2>Team</h2>
+    <div class="rij-item" id="naarinst" style="cursor:pointer;margin-bottom:12px"><div class="info"><div class="titel">⚙️ Instellingen &amp; meldingen</div><div class="sub">Zet meldingen aan en kies welke je wilt</div></div><span class="pijl">›</span></div>
+    <div id="lijst"><div class="center">Laden…</div></div>`;
+  document.getElementById("naarinst").onclick=()=>{TAB="instellingen";buildTabbar();route();};
   await loadPlayers();
   const L=document.getElementById("lijst");
   if(!PLAYERS.length){L.innerHTML=`<div class="kaart"><div class="center">De teamlijst is nog niet ingesteld.${isAdmin()?' Ga naar Beheer om de speelsters in te laden.':''}</div></div>`;return;}
@@ -765,12 +865,16 @@ function bindQuick(a){
 }
 // ---------- BERICHTEN ----------
 function viewBerichten(){
+  const showBanner = PUSH_SUPPORTED && typeof Notification!=="undefined" && Notification.permission==="default";
   el.innerHTML=`<h2>Berichten</h2>
+    ${showBanner?`<div class="kaart" id="pushbanner" style="cursor:pointer;background:var(--rood-licht);border-color:#F3C7C7;display:flex;align-items:center;gap:10px"><span style="font-size:20px">🔔</span><div style="flex:1"><b style="font-size:13px">Zet meldingen aan</b><div class="mini">Krijg een seintje bij nieuwe berichten en herinneringen.</div></div><span class="pijl">›</span></div>`:''}
     ${isAdmin()?`<div class="kaart" style="background:var(--rood-licht);border-color:#F3C7C7"><b style="font-size:13px">Nieuw bericht</b>
       <textarea id="mtext" placeholder="Schrijf een mededeling…"></textarea>
       <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--grijs);margin-top:8px"><input type="checkbox" id="mbelang" style="width:auto"> Markeer als belangrijk</label>
       <button class="knop" id="mplaats">Plaatsen</button><div id="mmsg"></div></div>`:''}
     <div id="feed"><div class="center">Laden…</div></div>`;
+  const pb=document.getElementById("pushbanner");
+  if(pb)pb.onclick=()=>{TAB="instellingen";buildTabbar();route();};
   if(isAdmin()){
     document.getElementById("mplaats").onclick=async()=>{
       const t=(document.getElementById("mtext").value||'').trim(); if(!t)return;
