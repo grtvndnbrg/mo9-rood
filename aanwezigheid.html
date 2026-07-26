@@ -650,7 +650,7 @@ function drawCarpool(st){
   const losb=st.los.length?`<div class="kaart" style="border-style:dashed;border-color:#E24B4A"><div class="mini" style="color:#791F1F;font-weight:600;margin-bottom:6px">Nog in te delen — tik om in een auto te zetten</div><div style="display:flex;flex-wrap:wrap;gap:6px">${st.los.map(k=>`<span data-move="los|${esc(k)}" class="chip none" style="cursor:pointer">${esc(k)}</span>`).join('')}</div></div>`:'';
   el.innerHTML=`<span class="terug" id="terug">‹ Diensten</span>
     <div class="detail-kop">Carpool — ${titel(a)}</div><div class="mini">${subline(a)}</div>
-    ${alle?'<div class="meld" style="text-align:center;margin-top:10px">✅ Alle auto\\'s compleet — team is onderweg!</div>':''}
+    ${alle?'<div class="meld" style="text-align:center;margin-top:10px">✅ Alle wagens compleet — team is onderweg!</div>':''}
     ${seg}${banner}${zelf}
     <div class="mini" style="margin:4px 0 8px">${dir==='heen'?'Heenreis':'Terugreis'} · tik een kind om het te verplaatsen</div>
     ${cars}${losb}
