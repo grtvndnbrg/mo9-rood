@@ -337,6 +337,12 @@ async function openBeheer(){
   if(!(await biometric())) return;
   const body=document.getElementById("body");
   body.innerHTML = `
+    <h2>Instellen</h2>
+    <div class="kaart">
+      <p class="mini">Eenmalig: laad de 11 speelsters en de eerste oefenwedstrijd (29 aug) in. Bestaande gegevens blijven staan.</p>
+      <button class="knop grijs" id="seed">Speelsters &amp; eerste wedstrijd inladen</button>
+      <div id="seedmsg"></div>
+    </div>
     <h2>Nieuwe activiteit</h2>
     <div class="kaart">
       <input id="btitel" placeholder="Titel (bijv. Wedstrijd vs. Blauw of Training)">
@@ -348,6 +354,17 @@ async function openBeheer(){
     <h2>Geverifieerde opkomst</h2>
     <p class="mini" style="margin-bottom:8px">Zet per speler de échte opkomst. Een afwijking t.o.v. de bevestiging wordt gemarkeerd.</p>
     <div id="verifwrap"><div class="center">Laden…</div></div>`;
+  document.getElementById("seed").onclick = async ()=>{
+    const m=document.getElementById("seedmsg");
+    try{
+      const ps = await getDocs(collection(db,"players"));
+      if(ps.empty){ for(let i=0;i<SPELERS.length;i++){ await setDoc(doc(db,"players","p"+(i+1)),{name:SPELERS[i]}); } }
+      const as = await getDocs(collection(db,"activities"));
+      if(as.empty){ await setDoc(doc(collection(db,"activities")),{title:"Oefenwedstrijd",date:"2026-08-29",type:"Oefenwedstrijd",ts:serverTimestamp()}); }
+      m.className="meld"; m.textContent="Klaar — speelsters en activiteit staan klaar.";
+      await loadPlayers();
+    }catch(e){ m.className="fout"; m.textContent=e.message; }
+  };
   document.getElementById("btoevoeg").onclick = async ()=>{
     const t=document.getElementById("btitel").value.trim();
     const d=document.getElementById("bdatum").value;
