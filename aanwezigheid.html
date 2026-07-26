@@ -214,7 +214,7 @@ onAuthStateChanged(auth, async user=>{
   MYUSER=null;
   try{ const us=await getDoc(doc(db,"users",user.uid)); if(us.exists()) MYUSER=us.data(); }catch(e){}
   if(!isAdmin() && (!MYUSER||!MYUSER.playerId)){ await renderOnboarding(); return; }
-  initMessaging();
+  await initMessaging();
   buildTabbar(); TAB="berichten"; route();
 });
 
