@@ -583,7 +583,7 @@ async function openTrends(){
 
 // ---------- DIENSTEN / CARPOOL ----------
 const CP={dir:"heen",act:null,present:[]};
-let cpSeats=3;
+let cpSeats=3, cpPick=null;
 function viewDiensten(){
   el.innerHTML=`<h2>Diensten — carpool</h2>
     <p class="mini" style="margin-bottom:8px">Kies een activiteit om de carpool te regelen (vooral voor uitwedstrijden).</p>
@@ -600,89 +600,88 @@ function viewDiensten(){
   unsub.push(u);
 }
 async function openCarpool(actId){
-  clearSubs();
+  clearSubs(); cpPick=null;
   const snap=await getDoc(doc(db,"activities",actId));
   if(!snap.exists()){viewDiensten();return;}
   CP.act={id:actId,...snap.data()}; CP.dir="heen";
   await loadPlayers();
   const rs=await getDocs(collection(db,"activities",actId,"rsvp"));
   const out={}; rs.docs.forEach(d=>{ if(d.data().status==='out') out[d.id]=1; });
-  CP.present=PLAYERS.filter(p=>!out[p.id]).map(p=>p.name);
+  CP.present=PLAYERS.filter(p=>!out[p.id]).map(p=>({id:p.id,name:p.name}));
   subscribeCarpool();
 }
 function cpRef(){ return doc(db,"activities",CP.act.id,"carpool",CP.dir); }
 function subscribeCarpool(){
-  clearSubs();
-  const u=onSnapshot(cpRef(), ds=>{
-    const st = ds.exists()
-      ? {cars:(ds.data().cars||[]).map(c=>({id:c.id,fam:c.fam,seats:c.seats,pas:c.pas||[],klaar:!!c.klaar})), los:ds.data().los||[]}
-      : {cars:[], los:CP.present.slice()};
-    drawCarpool(st);
-  });
+  clearSubs(); cpPick=null;
+  const u=onSnapshot(cpRef(), ds=>drawCarpool(ds.exists()?ds.data():{}));
   unsub.push(u);
 }
-async function saveCarpool(st){ try{ await setDoc(cpRef(),{cars:st.cars,los:st.los,updated:serverTimestamp()}); }catch(e){ alert("Kon niet opslaan: "+e.message);} }
-function waText(st){ let t=`🚗 Carpool MO9 Rood — ${titel(CP.act)} (${subline(CP.act)})\n${CP.dir==='heen'?'Heenreis':'Terugreis'}\n`;
-  st.cars.forEach(c=>t+=`• ${c.fam} (${c.pas.length}/${c.seats}): ${(c.pas||[]).join(', ')||'—'}${c.klaar?' ✅':''}\n`);
-  if(st.los.length)t+=`Nog in te delen: ${st.los.join(', ')} — wie kan rijden?\n`; return t; }
-function drawCarpool(st){
-  const a=CP.act, dir=CP.dir;
-  const iAm=st.cars.findIndex(c=>c.id===ME.uid);
-  const totVrij=st.cars.reduce((s,c)=>s+(c.seats-c.pas.length),0);
-  const alle=st.cars.length&&st.cars.every(c=>c.klaar)&&!st.los.length;
-  const banner=st.los.length?`<div class="fout">${st.los.length} kind(eren) zonder plek — meld een auto aan of verdeel onderling.</div>`:`<div class="meld">Iedereen heeft een plek ✓ · ${totVrij} stoel(en) over.</div>`;
-  const seg=`<div style="display:flex;background:#f1efe9;border-radius:10px;padding:3px;margin:10px 0 12px"><button id="dh" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='heen'?'#fff':'none'};color:${dir==='heen'?'var(--rood)':'var(--grijs)'}">Heen</button><button id="dt" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='terug'?'#fff':'none'};color:${dir==='terug'?'var(--rood)':'var(--grijs)'}">Terug</button></div>`;
+async function cpSet(obj){ try{ await setDoc(cpRef(), obj, {merge:true}); }catch(e){ alert("Kon niet opslaan: "+e.message);} }
+function carsOf(data){ const m=data.cars||{}; return Object.keys(m).filter(id=>m[id]&&m[id].name).map(id=>({id,name:m[id].name,seats:m[id].seats||1,klaar:!!m[id].klaar})); }
+function locOf(data,pid){ const cid=(data.assign||{})[pid]; const m=data.cars||{}; return (cid&&m[cid]&&m[cid].name)?cid:null; }
+function waText(data){ const cars=carsOf(data);
+  let t=`🚗 Carpool MO9 Rood — ${titel(CP.act)} (${subline(CP.act)})\n${CP.dir==='heen'?'Heenreis':'Terugreis'}\n`;
+  cars.forEach(c=>{ const kids=CP.present.filter(p=>locOf(data,p.id)===c.id).map(p=>p.name); t+=`• ${c.name} (${kids.length}/${c.seats}): ${kids.join(', ')||'—'}${c.klaar?' ✅':''}\n`; });
+  const los=CP.present.filter(p=>!locOf(data,p.id)).map(p=>p.name);
+  if(los.length)t+=`Nog in te delen: ${los.join(', ')} — wie kan rijden?\n`;
+  return t; }
+function drawCarpool(data){
+  const a=CP.act, dir=CP.dir, cars=carsOf(data);
+  const kidsIn=cid=>CP.present.filter(p=>locOf(data,p.id)===cid);
+  const los=CP.present.filter(p=>!locOf(data,p.id));
+  const iAm=(data.cars||{})[ME.uid] && (data.cars||{})[ME.uid].name;
+  const totVrij=cars.reduce((s,c)=>s+(c.seats-kidsIn(c.id).length),0);
+  const alle=cars.length&&cars.every(c=>c.klaar)&&!los.length;
+  const banner=los.length?`<div class="fout">${los.length} kind(eren) zonder plek — meld een auto aan of deel ze in.</div>`:(cars.length?`<div class="meld">Iedereen heeft een plek ✓ · ${totVrij} stoel(en) over.</div>`:`<div class="mini">Nog geen auto's aangemeld.</div>`);
   const sb='width:26px;height:26px;border:1px solid var(--lijn);background:#fff;border-radius:7px;font-size:16px;cursor:pointer;line-height:1';
+  const seg=`<div style="display:flex;background:#f1efe9;border-radius:10px;padding:3px;margin:10px 0 12px"><button id="dh" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='heen'?'#fff':'none'};color:${dir==='heen'?'var(--rood)':'var(--grijs)'}">Heen</button><button id="dt" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='terug'?'#fff':'none'};color:${dir==='terug'?'var(--rood)':'var(--grijs)'}">Terug</button></div>`;
   let zelf;
-  if(iAm<0){ zelf=`<div class="kaart"><b style="font-size:13px">Ik kan rijden</b>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
-      <span style="font-size:13px;color:var(--grijs)">Plekken: <button id="sm" style="${sb}">−</button> <b>${cpSeats}</b> <button id="sp" style="${sb}">+</button></span>
-      <button id="aan" class="knop" style="width:auto;margin-top:0;padding:9px 16px">Aanmelden</button></div>
-    <div class="mini" style="margin-top:6px">Reizen er mensen mee? Zet de plekken lager.</div></div>`;
-  } else { zelf=`<div class="kaart" style="background:var(--groen-licht);border-color:var(--groen-licht-rand)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>Jij rijdt mee</b><div class="mini">Pas je plekken aan bij je auto hieronder</div></div><button id="af" class="knop grijs" style="width:auto;margin-top:0;padding:8px 13px">Ik kan toch niet</button></div></div>`; }
-  const cars=st.cars.map((c,ci)=>{const vrij=c.seats-c.pas.length,over=vrij<0,mine=c.id===ME.uid;
+  if(!iAm){ zelf=`<div class="kaart"><b style="font-size:13px">Ik kan rijden</b>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;color:var(--grijs)">Plekken: <button id="sm" style="${sb}">−</button> <b>${cpSeats}</b> <button id="sp" style="${sb}">+</button></span><button id="aan" class="knop" style="width:auto;margin-top:0;padding:9px 16px">Aanmelden</button></div>
+    <div class="mini" style="margin-top:6px">Je auto komt leeg binnen; jij deelt zelf kinderen in.</div></div>`;
+  } else { zelf=`<div class="kaart" style="background:var(--groen-licht);border-color:var(--groen-licht-rand)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>Jij rijdt mee</b><div class="mini">Pas je plekken aan bij je auto</div></div><button id="af" class="knop grijs" style="width:auto;margin-top:0;padding:8px 13px">Ik kan toch niet</button></div></div>`; }
+  const chip=(p,curcid)=>{ const opened=cpPick===p.id; let panel='';
+    if(opened){ const dests=cars.filter(c=>c.id!==curcid).map(c=>{const vrij=c.seats-kidsIn(c.id).length;return `<button data-assign="${p.id}|${c.id}" ${vrij<=0?'disabled':''} style="display:block;width:100%;text-align:left;border:none;background:none;padding:7px 4px;font-size:13px;cursor:${vrij<=0?'default':'pointer'};color:${vrij<=0?'var(--lichtgrijs)':'var(--tekst)'}">🚗 ${esc(c.name)} ${vrij>0?`· ${vrij} vrij`:'· vol'}</button>`;}).join('');
+      const losOpt = curcid? `<button data-assign="${p.id}|_los" style="display:block;width:100%;text-align:left;border:none;background:none;padding:7px 4px;font-size:13px;cursor:pointer;color:var(--rood)">↩︎ Uit de auto (nog in te delen)</button>`:'';
+      panel=`<div style="margin-top:6px;background:#faf9f6;border:1px solid var(--lijn);border-radius:10px;padding:6px 9px"><div class="mini" style="margin-bottom:2px">${esc(p.name)} → kies:</div>${dests||'<div class="mini">Geen andere auto met plek</div>'}${losOpt}</div>`; }
+    return `<div style="display:inline-block"><span data-pick="${p.id}" class="chip none" style="cursor:pointer">${esc(p.name)}</span>${panel}</div>`; };
+  const carsHtml=cars.map(c=>{ const kids=kidsIn(c.id); const vrij=c.seats-kids.length, over=vrij<0, mine=c.id===ME.uid;
     return `<div class="kaart" style="${over?'border-color:#E24B4A':''}">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="flex:1"><b>🚗 ${esc(c.fam)}${mine?' (jij)':''}</b>
-        <div class="mini" style="margin-top:3px">bezet ${c.pas.length} · plekken <button data-sm="${ci}" style="${sb}">−</button> <b>${c.seats}</b> <button data-sp="${ci}" style="${sb}">+</button>${over?' <span style="color:#791F1F">te vol!</span>':(vrij>0?` · ${vrij} vrij`:' · vol')}</div></div>
-        <button data-klaar="${ci}" style="border:1px solid ${c.klaar?'var(--groen)':'var(--lijn)'};background:${c.klaar?'var(--groen)':'#fff'};color:${c.klaar?'#fff':'var(--grijs)'};border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;align-self:flex-start">${c.klaar?'compleet ✓':'compleet?'}</button></div>
-      <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:6px">${c.pas.map(k=>`<span data-move="c${ci}|${esc(k)}" class="chip none" style="cursor:pointer">${esc(k)}</span>`).join('')||'<span class="mini">— leeg —</span>'}</div></div>`;}).join('');
-  const losb=st.los.length?`<div class="kaart" style="border-style:dashed;border-color:#E24B4A"><div class="mini" style="color:#791F1F;font-weight:600;margin-bottom:6px">Nog in te delen — tik om in een auto te zetten</div><div style="display:flex;flex-wrap:wrap;gap:6px">${st.los.map(k=>`<span data-move="los|${esc(k)}" class="chip none" style="cursor:pointer">${esc(k)}</span>`).join('')}</div></div>`:'';
+      <div style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>🚗 ${esc(c.name)}${mine?' (jij)':''}</b>
+        <div class="mini" style="margin-top:3px">bezet ${kids.length} · plekken <button data-sm="${c.id}" style="${sb}">−</button> <b>${c.seats}</b> <button data-sp="${c.id}" style="${sb}">+</button>${over?' <span style="color:#791F1F">te vol!</span>':(vrij>0?` · ${vrij} vrij`:' · vol')}</div></div>
+        <button data-klaar="${c.id}" style="border:1px solid ${c.klaar?'var(--groen)':'var(--lijn)'};background:${c.klaar?'var(--groen)':'#fff'};color:${c.klaar?'#fff':'var(--grijs)'};border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;align-self:flex-start">${c.klaar?'compleet ✓':'compleet?'}</button></div>
+      <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:6px">${kids.map(p=>chip(p,c.id)).join('')||'<span class="mini">— nog leeg, deel kinderen in —</span>'}</div></div>`;}).join('');
+  const losHtml=los.length?`<div class="kaart" style="border-style:dashed;border-color:#E24B4A"><div class="mini" style="color:#791F1F;font-weight:600;margin-bottom:6px">Nog in te delen — tik een kind om een auto te kiezen</div><div style="display:flex;flex-wrap:wrap;gap:6px">${los.map(p=>chip(p,null)).join('')}</div></div>`:'';
   el.innerHTML=`<span class="terug" id="terug">‹ Diensten</span>
     <div class="detail-kop">Carpool — ${titel(a)}</div><div class="mini">${subline(a)}</div>
     ${alle?'<div class="meld" style="text-align:center;margin-top:10px">✅ Alle wagens compleet — team is onderweg!</div>':''}
     ${seg}${banner}${zelf}
-    <div class="mini" style="margin:4px 0 8px">${dir==='heen'?'Heenreis':'Terugreis'} · tik een kind om het te verplaatsen</div>
-    ${cars}${losb}
+    <div class="mini" style="margin:4px 0 8px">${dir==='heen'?'Heenreis':'Terugreis'}</div>
+    ${carsHtml}${losHtml}
     <a class="knop" id="wabtn" style="background:#25D366">Kopieer voor WhatsApp</a><div id="wamsg"></div>
-    <div class="mini" style="margin-top:12px;border-top:1px solid var(--lijn);padding-top:9px">Route naar het ophaaladres en de rijbeurten-teller volgen zodra de contactgegevens in de app staan.</div>`;
-  wireCarpool(st);
+    <div class="mini" style="margin-top:12px;border-top:1px solid var(--lijn);padding-top:9px">Route naar ophaaladres en de rijbeurten-teller volgen zodra de contactgegevens in de app staan.</div>`;
+  wireCarpool(data,cars);
 }
-function wireCarpool(st){
-  const mut=fn=>{const c=JSON.parse(JSON.stringify(st));fn(c);saveCarpool(c);};
+function wireCarpool(data,cars){
   document.getElementById("terug").onclick=()=>{clearSubs();viewDiensten();};
   const dh=document.getElementById("dh"),dt=document.getElementById("dt");
   if(dh)dh.onclick=()=>{CP.dir='heen';subscribeCarpool();};
   if(dt)dt.onclick=()=>{CP.dir='terug';subscribeCarpool();};
   const sm=document.getElementById("sm"),sp=document.getElementById("sp");
-  if(sm)sm.onclick=()=>{cpSeats=Math.max(1,cpSeats-1);drawCarpool(st);};
-  if(sp)sp.onclick=()=>{cpSeats=Math.min(6,cpSeats+1);drawCarpool(st);};
+  if(sm)sm.onclick=()=>{cpSeats=Math.max(1,cpSeats-1);drawCarpool(data);};
+  if(sp)sp.onclick=()=>{cpSeats=Math.min(6,cpSeats+1);drawCarpool(data);};
   const aan=document.getElementById("aan");
-  if(aan)aan.onclick=()=>mut(c=>{c.cars.push({id:ME.uid,fam:(MYUSER&&MYUSER.name)||ME.email||"Ik",seats:cpSeats,pas:[],klaar:false});const car=c.cars[c.cars.length-1];while(c.los.length&&car.pas.length<car.seats)car.pas.push(c.los.shift());});
+  if(aan)aan.onclick=()=>cpSet({cars:{[ME.uid]:{name:(MYUSER&&MYUSER.name)||ME.email||"Ik",seats:cpSeats,klaar:false}}});
   const af=document.getElementById("af");
-  if(af)af.onclick=()=>{if(confirm("Weet je het zeker? Jouw auto valt weg en de kinderen staan zonder plek. Jij zorgt zelf voor vervanging en meldt het in de WhatsApp-groep."))mut(c=>{const i=c.cars.findIndex(x=>x.id===ME.uid);if(i>=0){c.los=c.los.concat(c.cars[i].pas);c.cars.splice(i,1);}});};
-  document.querySelectorAll("[data-sm]").forEach(b=>b.onclick=()=>mut(c=>{const i=+b.dataset.sm;c.cars[i].seats=Math.max(1,c.cars[i].seats-1);}));
-  document.querySelectorAll("[data-sp]").forEach(b=>b.onclick=()=>mut(c=>{const i=+b.dataset.sp;c.cars[i].seats=Math.min(8,c.cars[i].seats+1);}));
-  document.querySelectorAll("[data-klaar]").forEach(b=>b.onclick=()=>mut(c=>{const i=+b.dataset.klaar;c.cars[i].klaar=!c.cars[i].klaar;}));
-  document.querySelectorAll("[data-move]").forEach(x=>x.onclick=()=>mut(c=>{const p=x.dataset.move.split('|');const loc=p[0],k=p.slice(1).join('|');
-    if(loc==='los')c.los=c.los.filter(y=>y!==k);else c.cars[+loc.slice(1)].pas=c.cars[+loc.slice(1)].pas.filter(y=>y!==k);
-    const start=loc==='los'?0:(+loc.slice(1)+1);let pl=false;
-    for(let s=0;s<c.cars.length;s++){const i=(start+s)%c.cars.length;if(c.cars[i].pas.length<c.cars[i].seats){c.cars[i].pas.push(k);pl=true;break;}}
-    if(!pl)c.los.push(k);}));
+  if(af)af.onclick=()=>{ if(confirm("Weet je het zeker? Jouw auto valt weg en de kinderen komen zonder plek. Jij zorgt zelf voor vervanging en meldt het in de WhatsApp-groep.")){
+    const upd={cars:{[ME.uid]:null},assign:{}}; CP.present.forEach(p=>{ if((data.assign||{})[p.id]===ME.uid) upd.assign[p.id]=null; }); cpSet(upd);} };
+  document.querySelectorAll("[data-sm]").forEach(b=>b.onclick=()=>{const cid=b.dataset.sm;const c=cars.find(x=>x.id===cid);cpSet({cars:{[cid]:{seats:Math.max(1,c.seats-1)}}});});
+  document.querySelectorAll("[data-sp]").forEach(b=>b.onclick=()=>{const cid=b.dataset.sp;const c=cars.find(x=>x.id===cid);cpSet({cars:{[cid]:{seats:Math.min(8,c.seats+1)}}});});
+  document.querySelectorAll("[data-klaar]").forEach(b=>b.onclick=()=>{const cid=b.dataset.klaar;const c=cars.find(x=>x.id===cid);cpSet({cars:{[cid]:{klaar:!c.klaar}}});});
+  document.querySelectorAll("[data-pick]").forEach(x=>x.onclick=()=>{cpPick=(cpPick===x.dataset.pick?null:x.dataset.pick);drawCarpool(data);});
+  document.querySelectorAll("[data-assign]").forEach(b=>b.onclick=()=>{const p=b.dataset.assign.split('|');const pid=p[0],cid=p[1];cpPick=null;cpSet({assign:{[pid]: cid==='_los'?null:cid }});});
   const wb=document.getElementById("wabtn");
-  if(wb)wb.onclick=async(e)=>{e.preventDefault();const t=waText(st);const m=document.getElementById("wamsg");
-    try{await navigator.clipboard.writeText(t);m.className="meld";m.textContent="Gekopieerd — plak het in de WhatsApp-groep.";}
-    catch(err){m.className="meld";m.style.whiteSpace="pre-wrap";m.textContent="Selecteer en kopieer:\n"+t;}};
+  if(wb)wb.onclick=async(e)=>{e.preventDefault();const t=waText(data);const m=document.getElementById("wamsg");try{await navigator.clipboard.writeText(t);m.className="meld";m.textContent="Gekopieerd — plak het in de WhatsApp-groep.";}catch(err){m.className="meld";m.style.whiteSpace="pre-wrap";m.textContent="Selecteer en kopieer:\n"+t;}};
 }
 </script>
 </body>
