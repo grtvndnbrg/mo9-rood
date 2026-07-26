@@ -23,10 +23,17 @@
   header .club{font-size:13px;color:#c9c7c2;margin-top:2px}
   header .badge{display:inline-block;margin-top:9px;background:var(--rood);color:#fff;font-size:12px;font-weight:600;padding:3px 11px;border-radius:20px}
   main{padding:20px 18px 40px}
-  h2{font-size:17px;font-weight:600;margin:26px 0 12px}
+  h2{font-size:17px;font-weight:600;margin:28px 0 12px;display:flex;align-items:center;gap:8px}
+  h2 .ico{font-size:17px}
+  h2:first-of-type{margin-top:6px}
   .banner{background:var(--rood-licht);border:1px solid #F3C7C7;border-radius:14px;padding:14px 16px}
   .banner .t{color:var(--rood-donker);font-weight:600;font-size:14px}
   .banner .s{color:var(--grijs);font-size:14px;margin-top:3px}
+  .quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .qcard{background:var(--zacht);border:1px solid var(--lijn);border-radius:14px;padding:13px 14px}
+  .qcard .lab{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--goud);font-weight:600}
+  .qcard .val{font-size:14px;font-weight:600;margin-top:3px;color:var(--tekst)}
+  .qcard .val small{display:block;font-weight:400;color:var(--grijs);font-size:12.5px;margin-top:1px}
   .lijst{border:1px solid var(--lijn);border-radius:14px;overflow:hidden}
   .rij{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--lijn)}
   .rij:last-child{border-bottom:none}
@@ -43,8 +50,13 @@
   .dienst{background:var(--zacht);border:1px solid var(--lijn);border-radius:12px;padding:14px 8px;text-align:center}
   .dienst .ico{font-size:22px}
   .dienst .lab{font-size:12px;margin-top:6px;color:var(--grijs)}
-  .infoblok{font-size:14px;color:var(--grijs)}
-  .infoblok div{padding:5px 0;border-bottom:1px solid var(--lijn)}
+  .kaart{border:1px solid var(--lijn);border-radius:14px;padding:15px 16px}
+  .kaart .veld{font-size:15px;font-weight:600}
+  .kaart .adres{font-size:14px;color:var(--grijs);margin-top:2px}
+  .kaart .knop{display:inline-block;margin-top:12px;background:var(--rood);color:#fff;font-size:13px;font-weight:600;
+    padding:8px 16px;border-radius:22px;text-decoration:none}
+  .infoblok{font-size:14px;color:var(--grijs);border:1px solid var(--lijn);border-radius:14px;overflow:hidden}
+  .infoblok div{padding:11px 15px;border-bottom:1px solid var(--lijn)}
   .infoblok div:last-child{border-bottom:none}
   .infoblok b{color:var(--tekst);font-weight:600}
   footer{background:var(--zacht);border-top:1px solid var(--lijn);padding:16px;text-align:center;color:var(--lichtgrijs);font-size:12px}
@@ -66,22 +78,53 @@
   <main>
     <div id="banner"></div>
 
-    <h2>Komende wedstrijden</h2>
+    <div class="quick">
+      <div class="qcard">
+        <div class="lab">Training</div>
+        <div class="val">Wordt bevestigd<small>dag &amp; tijd volgen</small></div>
+      </div>
+      <div class="qcard">
+        <div class="lab">Thuisveld</div>
+        <div class="val">Sportpark Harga<small>Olympiaweg 63, Schiedam</small></div>
+      </div>
+    </div>
+
+    <h2><span class="ico">🏑</span>Komende wedstrijden</h2>
     <div id="wedstrijden" class="lijst"><div class="leeg">Schema wordt geladen…</div></div>
 
-    <h2>Diensten</h2>
+    <h2><span class="ico">🧦</span>Diensten</h2>
     <div class="diensten">
       <div class="dienst"><div class="ico">🚩</div><div class="lab">Scheidsrechter</div></div>
       <div class="dienst"><div class="ico">🚗</div><div class="lab">Rijden</div></div>
       <div class="dienst"><div class="ico">🧺</div><div class="lab">Wassen</div></div>
     </div>
 
-    <h2>Handig om te weten</h2>
+    <h2><span class="ico">📍</span>Thuisveld &amp; route</h2>
+    <div class="kaart">
+      <div class="veld">HC Schiedam — Sportpark Harga</div>
+      <div class="adres">Olympiaweg 63, 3118 JD Schiedam</div>
+      <a class="knop" href="https://maps.google.com/?q=Sportpark+Harga,+Olympiaweg+63,+3118+JD+Schiedam" target="_blank" rel="noopener">Route in Google Maps →</a>
+    </div>
+
+    <h2><span class="ico">✅</span>Team-afspraken</h2>
     <div class="infoblok">
-      <div><b>Tenue</b> — rood shirt, scheenbeschermers en bitje verplicht</div>
+      <div><b>Tenue</b> — rood shirt, zwarte rok of broek, scheenbeschermers en bitje verplicht</div>
+      <div><b>Meenemen</b> — hockeystick, gevulde bidon en bij kou een extra laag</div>
       <div><b>Op tijd</b> — graag 15 min voor aanvang aanwezig</div>
-      <div><b>Uitwedstrijden</b> — we rijden met ouders; zie rijschema</div>
+      <div><b>Uitwedstrijden</b> — we rijden samen met ouders; zie het rijschema</div>
       <div><b>Afmelden</b> — via de WhatsApp-groep, uiterlijk donderdag</div>
+      <div><b>Sfeer</b> — plezier voorop: we moedigen positief aan en spelen fair play</div>
+    </div>
+
+    <h2><span class="ico">📅</span>Belangrijke data</h2>
+    <div class="infoblok">
+      <div><b>Za 29 augustus</b> — eerste oefenwedstrijd (tijd en locatie volgen)</div>
+      <div><b>September</b> — start van de competitie</div>
+      <div><b>Meer data</b> — toernooien en teamuitjes volgen in het schema</div>
+    </div>
+
+    <h2><span class="ico">📇</span>Contact</h2>
+    <div class="infoblok">
       <div><b>Teammanager</b> — Gert · 06-14267869 · grt.vndnbrg@gmail.com</div>
     </div>
   </main>
