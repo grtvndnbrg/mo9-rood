@@ -530,13 +530,8 @@ async function openTrends(){
 
 // ---------- BIOMETRISCH SLOT ----------
 async function biometric(){
-  if(biometricOk) return true;
-  if(!window.PublicKeyCredential){biometricOk=true;return true;}
-  try{
-    const challenge=new Uint8Array(32);crypto.getRandomValues(challenge);
-    await navigator.credentials.get({publicKey:{challenge,timeout:60000,userVerification:"required",rpId:location.hostname,allowCredentials:[]}});
-    biometricOk=true;return true;
-  }catch(e){ biometricOk=true; return true; }
+  // Biometrisch slot volgt via passkeys (samen met pushmeldingen). Nu geen prompt.
+  return true;
 }
 </script>
 </body>
