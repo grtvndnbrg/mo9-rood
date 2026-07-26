@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>MO9 Rood — Aanwezigheid</title>
+<title>MO9 Rood — Team-app</title>
 <meta name="theme-color" content="#1a1a1a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -23,35 +23,35 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--pagina);color:var(--tekst);line-height:1.55;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:640px;margin:0 auto;background:var(--vlak);min-height:100vh}
-  header{background:var(--zwart);color:#fff;padding:16px 18px;border-bottom:4px solid var(--goud);
+  .wrap{max-width:640px;margin:0 auto;background:var(--vlak);min-height:100vh;padding-bottom:74px}
+  header{background:var(--zwart);color:#fff;padding:14px 18px;border-bottom:4px solid var(--goud);
     display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
-  header img{height:40px}
+  header img{height:38px}
   header .t{flex:1;min-width:0}
   header .t .k{font-size:11px;letter-spacing:.06em;color:var(--goud);text-transform:uppercase}
-  header .t h1{font-size:18px;font-weight:600}
-  header button.uit{background:transparent;border:1px solid #555;color:#ddd;border-radius:8px;
-    font-size:12px;padding:6px 10px;cursor:pointer}
+  header .t h1{font-size:17px;font-weight:600}
+  header button.uit{background:transparent;border:1px solid #555;color:#ddd;border-radius:8px;font-size:12px;padding:6px 10px;cursor:pointer}
   main{padding:18px}
-  h2{font-size:15px;font-weight:600;margin:22px 0 10px}
+  h2{font-size:15px;font-weight:600;margin:20px 0 10px}
+  h2:first-child{margin-top:4px}
   .kaart{background:var(--vlak);border:1px solid var(--lijn);border-radius:14px;padding:14px 15px;margin-bottom:12px}
-  input,select{width:100%;padding:11px 12px;border:1px solid var(--lijn);border-radius:9px;font-size:15px;
-    background:#fff;color:var(--tekst);margin-top:8px;font-family:inherit}
-  .knop{display:inline-block;width:100%;background:var(--rood);color:#fff;border:none;border-radius:9px;
-    padding:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px}
+  input,select{width:100%;padding:11px 12px;border:1px solid var(--lijn);border-radius:9px;font-size:15px;background:#fff;color:var(--tekst);margin-top:8px;font-family:inherit}
+  label.veldlbl{font-size:12px;color:var(--grijs);margin-top:10px;display:block}
+  .knop{display:inline-block;width:100%;background:var(--rood);color:#fff;border:none;border-radius:9px;padding:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;text-align:center;text-decoration:none}
   .knop.grijs{background:#eceae5;color:#333}
   .knop.google{background:#fff;color:#1c1c1c;border:1px solid var(--lijn)}
-  .knop.klein{width:auto;padding:8px 14px;font-size:13px;margin-top:0}
+  .knop.uitlijn{background:var(--goud);color:#3a2a00}
   .link{color:var(--rood);text-decoration:none;font-size:14px;cursor:pointer}
   .fout{color:var(--rood-donker);background:var(--rood-licht);border-radius:8px;padding:9px 11px;font-size:13px;margin-top:12px}
   .meld{color:var(--groen-licht-tekst);background:var(--groen-licht);border-radius:8px;padding:9px 11px;font-size:13px;margin-top:12px}
-  .act-kop{display:flex;align-items:center;gap:12px}
-  .act-datum{text-align:center;min-width:44px}
-  .act-datum .d{font-size:19px;font-weight:600;line-height:1}
-  .act-datum .m{font-size:11px;color:var(--lichtgrijs);text-transform:uppercase}
-  .act-info{flex:1;min-width:0}
-  .act-info .titel{font-size:15px;font-weight:600}
-  .act-info .sub{font-size:13px;color:var(--grijs)}
+  .rij-item{display:flex;align-items:center;gap:12px;cursor:pointer}
+  .datum{text-align:center;min-width:44px}
+  .datum .d{font-size:19px;font-weight:600;line-height:1}
+  .datum .m{font-size:11px;color:var(--lichtgrijs);text-transform:uppercase}
+  .info{flex:1;min-width:0}
+  .info .titel{font-size:15px;font-weight:600}
+  .info .sub{font-size:13px;color:var(--grijs)}
+  .pijl{color:var(--lichtgrijs)}
   .tel{display:flex;gap:8px;margin-top:12px;font-size:12px;flex-wrap:wrap}
   .tel span{padding:3px 9px;border-radius:20px}
   .tel .g{background:var(--groen);color:var(--groen-donker)}
@@ -72,7 +72,6 @@
   .chip.in{background:var(--groen);color:var(--groen-donker)}
   .chip.out{background:var(--rood-chip);color:var(--rood-chip-tekst)}
   .chip.none{background:var(--groen-licht);color:var(--groen-licht-tekst);border:1px solid var(--groen-licht-rand)}
-  .adminbadge{font-size:11px;background:var(--goud);color:#3a2a00;padding:2px 9px;border-radius:20px;font-weight:600}
   .mini{font-size:12px;color:var(--grijs);margin-top:2px}
   .verif{display:flex;gap:6px;align-items:center}
   .verif button{padding:5px 9px;border-radius:7px;font-size:12px;cursor:pointer;border:1px solid var(--lijn);background:#fff;color:var(--grijs)}
@@ -80,21 +79,26 @@
   .verif button.on-out{background:var(--rood-chip);color:var(--rood-chip-tekst);border-color:var(--rood-chip-rand)}
   .afw{font-size:10px;color:#854F0B;background:#FAEEDA;padding:3px 7px;border-radius:20px;white-space:nowrap}
   .center{text-align:center;color:var(--lichtgrijs);padding:24px;font-size:14px}
-  .sec-tab{display:flex;gap:8px;margin-bottom:14px}
-  .sec-tab button{flex:1;padding:9px;border-radius:9px;border:1px solid var(--lijn);background:#fff;color:var(--grijs);font-size:13px;font-weight:600;cursor:pointer}
-  .sec-tab button.on{background:var(--zwart);color:#fff;border-color:var(--zwart)}
-  .lock{max-width:360px;margin:40px auto;text-align:center;padding:0 20px}
-  .lock .ico{font-size:40px}
+  .terug{font-size:14px;color:var(--rood);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:4px}
+  .detail-kop{font-size:20px;font-weight:600;margin:6px 0 2px}
+  .detail-r{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--lijn);font-size:14px}
+  .detail-r .l{color:var(--grijs);min-width:96px}
+  nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;max-width:640px;margin:0 auto;
+    background:#fff;border-top:1px solid var(--lijn);padding-bottom:env(safe-area-inset-bottom)}
+  nav.tabbar button{flex:1;background:none;border:none;padding:9px 0 8px;color:var(--lichtgrijs);cursor:pointer;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px}
+  nav.tabbar button .ic{font-size:20px;line-height:1}
+  nav.tabbar button.on{color:var(--rood);font-weight:600}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <img src="https://lirp.cdn-website.com/dfcb1f77/dms3rep/multi/opt/HCSLOGO-400h.png" alt="HCS">
-    <div class="t"><div class="k">HC Schiedam</div><h1>MO9 Rood — Aanwezigheid</h1></div>
+    <div class="t"><div class="k">HC Schiedam</div><h1 id="htitel">MO9 Rood</h1></div>
     <button class="uit" id="uitknop" style="display:none" onclick="doUit()">Uitloggen</button>
   </header>
   <main id="app"><div class="center">Laden…</div></main>
+  <nav class="tabbar" id="tabbar" style="display:none"></nav>
 </div>
 
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
@@ -104,7 +108,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   GoogleAuthProvider, signInWithPopup, signOut, setPersistence, browserLocalPersistence }
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc,
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc,
   onSnapshot, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -121,8 +125,10 @@ const ADMINS = ["grt.vndnbrg@gmail.com"];
 const SPELERS = ["Kate van den Berg","Zephie Broekhuis","Wies Eggen de Koning","Sarah Gan",
   "Bobbie van der Horst","Marley Hilgeman","Helena Kraaijeveld","Ottilie Peters",
   "Jacky Verdouw","Fem van der Vlugt","Vera Dobrick"];
+const THUISADRES = "Sportpark Harga, Olympiaweg 63, 3118 JD Schiedam";
 const MAAND=["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
 const DAG=["zo","ma","di","wo","do","vr","za"];
+const DAGVOL=["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -131,48 +137,46 @@ setPersistence(auth, browserLocalPersistence);
 
 const el = document.getElementById("app");
 const uitknop = document.getElementById("uitknop");
-let ME = null, MYUSER = null, PLAYERS = [], adminTab = "aanmelden", biometricOk = false;
+const tabbar = document.getElementById("tabbar");
+let ME=null, MYUSER=null, PLAYERS=[], TAB="agenda", biometricOk=false;
+let unsub=[];
+const clearSubs=()=>{unsub.forEach(u=>{try{u()}catch(e){}}); unsub=[];};
 
-window.doUit = ()=>signOut(auth);
-const isAdmin = ()=> ME && ADMINS.includes((ME.email||"").toLowerCase());
-const esc = s => (s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+window.doUit=()=>signOut(auth);
+const isAdmin=()=> ME && ADMINS.includes((ME.email||"").toLowerCase());
+const esc=s=>(s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 onAuthStateChanged(auth, async user=>{
-  ME = user; biometricOk = false;
-  uitknop.style.display = user ? "block" : "none";
+  ME=user; biometricOk=false;
+  uitknop.style.display=user?"block":"none";
+  tabbar.style.display="none";
+  clearSubs();
   if(!user){ renderLogin(); return; }
-  MYUSER = null;
-  try{ const us = await getDoc(doc(db,"users",user.uid)); if(us.exists()) MYUSER = us.data(); }catch(e){}
-  if(!isAdmin() && (!MYUSER || !MYUSER.playerId)){ await renderOnboarding(); return; }
-  renderMain();
+  MYUSER=null;
+  try{ const us=await getDoc(doc(db,"users",user.uid)); if(us.exists()) MYUSER=us.data(); }catch(e){}
+  if(!isAdmin() && (!MYUSER||!MYUSER.playerId)){ await renderOnboarding(); return; }
+  buildTabbar(); TAB="agenda"; route();
 });
 
 // ---------- LOGIN ----------
 function renderLogin(){
-  el.innerHTML = `
+  el.innerHTML=`
     <h2>Inloggen</h2>
     <div class="kaart">
       <input id="em" type="email" placeholder="E-mailadres" autocomplete="email">
       <input id="pw" type="password" placeholder="Wachtwoord" autocomplete="current-password">
       <button class="knop" id="inlog">Inloggen</button>
       <div id="fout"></div>
-      <div style="margin-top:14px;text-align:center">
-        <span class="link" id="maak">Nog geen account? Maak er een aan</span>
-      </div>
+      <div style="margin-top:14px;text-align:center"><span class="link" id="maak">Nog geen account? Maak er een aan</span></div>
     </div>
     <button class="knop google" id="glog">Inloggen met Google</button>
-    <p class="mini" style="text-align:center;margin-top:16px">Voor ouders van MO9 Rood. Log in met je eigen e-mail; je blijft daarna ingelogd op dit toestel.</p>`;
-  document.getElementById("inlog").onclick = async ()=>{
-    const em=document.getElementById("em").value.trim(), pw=document.getElementById("pw").value;
-    try{ await signInWithEmailAndPassword(auth,em,pw); }catch(e){ fout(e); }
-  };
-  document.getElementById("glog").onclick = async ()=>{
-    try{ await signInWithPopup(auth,new GoogleAuthProvider()); }catch(e){ fout(e); }
-  };
-  document.getElementById("maak").onclick = renderRegister;
+    <p class="mini" style="text-align:center;margin-top:16px">Voor ouders van MO9 Rood. Je blijft na inloggen ingelogd op dit toestel.</p>`;
+  document.getElementById("inlog").onclick=async()=>{try{await signInWithEmailAndPassword(auth,val("em"),val("pw"));}catch(e){fout(e);}};
+  document.getElementById("glog").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider());}catch(e){fout(e);}};
+  document.getElementById("maak").onclick=renderRegister;
 }
 function renderRegister(){
-  el.innerHTML = `
+  el.innerHTML=`
     <h2>Account aanmaken</h2>
     <div class="kaart">
       <input id="em" type="email" placeholder="E-mailadres" autocomplete="email">
@@ -181,288 +185,358 @@ function renderRegister(){
       <div id="fout"></div>
       <div style="margin-top:14px;text-align:center"><span class="link" id="terug">Terug naar inloggen</span></div>
     </div>`;
-  document.getElementById("reg").onclick = async ()=>{
-    const em=document.getElementById("em").value.trim(), pw=document.getElementById("pw").value;
-    try{ await createUserWithEmailAndPassword(auth,em,pw); }catch(e){ fout(e); }
-  };
-  document.getElementById("terug").onclick = renderLogin;
+  document.getElementById("reg").onclick=async()=>{try{await createUserWithEmailAndPassword(auth,val("em"),val("pw"));}catch(e){fout(e);}};
+  document.getElementById("terug").onclick=renderLogin;
 }
-function fout(e){
-  const f=document.getElementById("fout"); if(!f) return;
-  const m={"auth/invalid-credential":"E-mail of wachtwoord klopt niet.",
-    "auth/invalid-email":"Ongeldig e-mailadres.","auth/weak-password":"Wachtwoord te kort (min. 6 tekens).",
-    "auth/email-already-in-use":"Er bestaat al een account met dit e-mailadres.",
-    "auth/popup-closed-by-user":"Inloggen geannuleerd."}[e.code] || e.message;
-  f.className="fout"; f.textContent=m;
-}
+const val=id=>document.getElementById(id).value.trim();
+function fout(e){const f=document.getElementById("fout");if(!f)return;
+  const m={"auth/invalid-credential":"E-mail of wachtwoord klopt niet.","auth/invalid-email":"Ongeldig e-mailadres.",
+    "auth/weak-password":"Wachtwoord te kort (min. 6 tekens).","auth/email-already-in-use":"Er bestaat al een account met dit e-mailadres.",
+    "auth/popup-closed-by-user":"Inloggen geannuleerd."}[e.code]||e.message;
+  f.className="fout";f.textContent=m;}
 
 // ---------- ONBOARDING ----------
 async function renderOnboarding(){
   await loadPlayers();
-  el.innerHTML = `
+  el.innerHTML=`
     <h2>Wie is jouw dochter?</h2>
     <div class="kaart">
-      <p class="mini">Koppel je account aan je dochter. Zo kun je haar aan- en afmelden.</p>
+      <p class="mini">Koppel je account aan je dochter, zodat je haar kunt aan- en afmelden.</p>
       <select id="kind"><option value="">— kies —</option>
         ${PLAYERS.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</select>
-      <button class="knop" id="opslaan">Opslaan</button>
-      <div id="fout"></div>
-    </div>`;
-  document.getElementById("opslaan").onclick = async ()=>{
-    const pid=document.getElementById("kind").value;
-    if(!pid){ return; }
-    try{
-      await setDoc(doc(db,"users",ME.uid),{playerId:pid,email:ME.email,ts:serverTimestamp()});
-      MYUSER={playerId:pid,email:ME.email};
-      renderMain();
-    }catch(e){ fout(e); }
+      <button class="knop" id="opslaan">Opslaan</button><div id="fout"></div>
+    </div>
+    ${PLAYERS.length?"":'<p class="mini" style="text-align:center">De teamlijst is nog niet ingesteld. Vraag de teammanager om dit te doen.</p>'}`;
+  document.getElementById("opslaan").onclick=async()=>{
+    const pid=document.getElementById("kind").value; if(!pid)return;
+    try{ await setDoc(doc(db,"users",ME.uid),{playerId:pid,email:ME.email,ts:serverTimestamp()});
+      MYUSER={playerId:pid,email:ME.email}; buildTabbar(); TAB="agenda"; route();
+    }catch(e){fout(e);}
   };
 }
-
 async function loadPlayers(){
-  const snap = await getDocs(collection(db,"players"));
-  PLAYERS = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
+  const snap=await getDocs(collection(db,"players"));
+  PLAYERS=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name));
 }
 
-// ---------- MAIN ----------
-let unsub = [];
-function clearSubs(){ unsub.forEach(u=>u()); unsub=[]; }
+// ---------- NAV ----------
+function buildTabbar(){
+  const tabs=[["agenda","ti","Agenda","calendar"],["aanmelden","ti","Aanmelden","checkbox"],["team","ti","Team","users"]];
+  if(isAdmin()) tabs.push(["beheer","ti","Beheer","settings"]);
+  tabbar.style.display="flex";
+  tabbar.innerHTML=tabs.map(t=>`<button data-tab="${t[0]}" class="${TAB===t[0]?'on':''}">
+    <span class="ic">${icon(t[3])}</span>${t[2]}</button>`).join("");
+  tabbar.querySelectorAll("button").forEach(b=>b.onclick=()=>{TAB=b.dataset.tab; buildTabbar(); route();});
+}
+function icon(n){const m={
+  calendar:'📅',checkbox:'✅',users:'👥',settings:'⚙️'};return m[n]||'•';}
 
-async function renderMain(){
+function route(){
   clearSubs();
-  await loadPlayers();
-  let head = "";
-  if(isAdmin()){
-    head = `<div class="sec-tab">
-      <button class="${adminTab==='aanmelden'?'on':''}" id="tab1">Aanmelden</button>
-      <button class="${adminTab==='beheer'?'on':''}" id="tab2">Beheer</button>
-      <button class="${adminTab==='trends'?'on':''}" id="tab3">Trends</button></div>`;
-  }
-  el.innerHTML = head + `<div id="body"></div>`;
-  if(isAdmin()){
-    document.getElementById("tab1").onclick=()=>{adminTab='aanmelden';renderMain();};
-    document.getElementById("tab2").onclick=()=>{adminTab='beheer';openBeheer();};
-    document.getElementById("tab3").onclick=()=>{adminTab='trends';openTrends();};
-  }
-  if(isAdmin() && adminTab==='beheer'){ openBeheer(); return; }
-  if(isAdmin() && adminTab==='trends'){ openTrends(); return; }
-  renderActivities();
+  window.scrollTo(0,0);
+  if(TAB==="agenda") viewAgenda();
+  else if(TAB==="aanmelden") viewAanmelden();
+  else if(TAB==="team") viewTeam();
+  else if(TAB==="beheer") viewBeheer();
 }
 
-function activityStream(cb){
-  const q = query(collection(db,"activities"), orderBy("date"));
-  return onSnapshot(q, snap=>{
-    const today = new Date(); today.setHours(0,0,0,0);
-    const acts = snap.docs.map(d=>({id:d.id,...d.data()}))
-      .filter(a=>a.date && new Date(a.date) >= today);
+// activities stream (upcoming by default)
+function activityStream(cb, includePast=false){
+  const q=query(collection(db,"activities"),orderBy("date"));
+  return onSnapshot(q,snap=>{
+    const today=new Date();today.setHours(0,0,0,0);
+    let acts=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!includePast) acts=acts.filter(a=>a.date&&new Date(a.date)>=today);
     cb(acts);
   });
 }
+function subline(a){
+  const d=new Date(a.date);
+  let s=`${DAG[d.getDay()]} ${d.getDate()} ${MAAND[d.getMonth()]}`;
+  if(a.time) s+=` · ${a.time}`;
+  if(a.type) s+=` · ${esc(a.type)}`;
+  return s;
+}
+function titel(a){
+  if(a.opponent){ const tu=a.homeAway?a.homeAway+' vs. ':''; return esc(tu+a.opponent); }
+  return esc(a.title||"Activiteit");
+}
 
-function renderActivities(){
-  const body = document.getElementById("body");
-  body.innerHTML = `<div class="center">Laden…</div>`;
-  const u = activityStream(acts=>{
-    if(!acts.length){ body.innerHTML = `<div class="kaart"><div class="center">Nog geen activiteiten ingepland.${isAdmin()?' Voeg er een toe onder Beheer.':''}</div></div>`; return; }
-    body.innerHTML = acts.map(a=>actCard(a)).join("");
+// ---------- AGENDA ----------
+function viewAgenda(){
+  el.innerHTML=`<h2>Agenda</h2><div id="lijst"><div class="center">Laden…</div></div>
+    <div style="text-align:center;margin-top:6px"><span class="link" id="togpast">Toon eerdere activiteiten</span></div>`;
+  let past=false;
+  const bind=()=>{clearSubs(); const u=activityStream(acts=>{
+      const L=document.getElementById("lijst"); if(!L)return;
+      if(!acts.length){L.innerHTML=`<div class="kaart"><div class="center">Geen activiteiten.${isAdmin()?' Voeg er een toe onder Beheer.':''}</div></div>`;return;}
+      const shown = past? acts.slice().reverse(): acts;
+      L.innerHTML=shown.map(a=>`<div class="kaart"><div class="rij-item" data-id="${a.id}">
+        <div class="datum"><div class="d">${new Date(a.date).getDate()}</div><div class="m">${MAAND[new Date(a.date).getMonth()]}</div></div>
+        <div class="info"><div class="titel">${titel(a)}</div><div class="sub">${subline(a)}</div></div>
+        <span class="pijl">›</span></div></div>`).join("");
+      L.querySelectorAll("[data-id]").forEach(r=>r.onclick=()=>viewActivity(r.dataset.id));
+    }, past); unsub.push(u);};
+  bind();
+  document.getElementById("togpast").onclick=(e)=>{past=!past; e.target.textContent=past?"Toon alleen komende":"Toon eerdere activiteiten"; bind();};
+}
+
+async function viewActivity(id){
+  clearSubs();
+  const snap=await getDoc(doc(db,"activities",id));
+  if(!snap.exists()){viewAgenda();return;}
+  const a={id,...snap.data()};
+  const d=new Date(a.date);
+  const mapQ = (a.homeAway==='Uit'&&a.location)? a.location : THUISADRES;
+  el.innerHTML=`
+    <span class="terug" id="terug">‹ Agenda</span>
+    <div class="detail-kop">${titel(a)}</div>
+    <div class="mini">${DAGVOL[d.getDay()]} ${d.getDate()} ${MAAND[d.getMonth()]} ${d.getFullYear()}</div>
+    <div class="kaart" style="margin-top:14px">
+      ${a.time?row("Tijd",esc(a.time)):""}
+      ${a.type?row("Type",esc(a.type)):""}
+      ${a.opponent?row("Tegenstander",esc(a.opponent)):""}
+      ${a.homeAway?row("Thuis/uit",esc(a.homeAway)):""}
+      ${row("Locatie",esc(a.location||THUISADRES))}
+    </div>
+    <a class="knop uitlijn" id="ics">In mijn agenda zetten</a>
+    <a class="knop grijs" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(mapQ)}">Route in Google Maps</a>
+    <div id="rsvpbox"></div>`;
+  document.getElementById("terug").onclick=()=>{TAB="agenda";buildTabbar();route();};
+  document.getElementById("ics").onclick=(e)=>{e.preventDefault();downloadICS(a);};
+  // rsvp box for my child
+  if(MYUSER&&MYUSER.playerId){
+    const box=document.getElementById("rsvpbox");
+    const u=onSnapshot(doc(db,"activities",id,"rsvp",MYUSER.playerId),ds=>{
+      const st=ds.exists()?ds.data().status:'none';
+      const p=PLAYERS.find(x=>x.id===MYUSER.playerId);
+      box.innerHTML=`<div class="mij"><div class="lbl">${p?esc(p.name):'Mijn dochter'} — ben je erbij?</div>
+        <div class="kies"><button class="${st==='in'?'aan-in':''}" data-s="in">Aanwezig</button>
+        <button class="${st==='out'?'aan-out':''}" data-s="out">Afwezig</button></div></div>`;
+      box.querySelectorAll("button").forEach(b=>b.onclick=()=>zetRsvp(id,MYUSER.playerId,b.dataset.s));
+    });
+    unsub.push(u);
+  }
+}
+function row(l,v){return `<div class="detail-r"><div class="l">${l}</div><div>${v}</div></div>`;}
+
+function downloadICS(a){
+  const dt=a.date.replace(/-/g,"");
+  let dtstart, dtend;
+  if(a.time){
+    const hm=a.time.replace(":","");
+    dtstart="DTSTART:"+dt+"T"+hm+"00";
+    let [h,m]=a.time.split(":").map(Number); let end=h*60+m+105;
+    const eh=String(Math.floor(end/60)%24).padStart(2,"0"), em=String(end%60).padStart(2,"0");
+    dtend="DTEND:"+dt+"T"+eh+em+"00";
+  } else { dtstart="DTSTART;VALUE=DATE:"+dt; dtend="DTEND;VALUE=DATE:"+dt; }
+  const loc=(a.location||THUISADRES).replace(/,/g,"\\,");
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//MO9Rood//NL","BEGIN:VEVENT",
+    "UID:"+a.id+"@mo9rood","DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z",
+    dtstart,dtend,"SUMMARY:MO9 Rood — "+(a.opponent?(a.homeAway+" vs. "+a.opponent):a.title),
+    "LOCATION:"+loc,"END:VEVENT","END:VCALENDAR"].join("\r\n");
+  const blob=new Blob([ics],{type:"text/calendar"});
+  const url=URL.createObjectURL(blob); const link=document.createElement("a");
+  link.href=url; link.download="mo9-"+a.date+".ics"; document.body.appendChild(link); link.click();
+  document.body.removeChild(link); setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+
+// ---------- AANMELDEN ----------
+function viewAanmelden(){
+  el.innerHTML=`<h2>Aanmelden</h2><div id="lijst"><div class="center">Laden…</div></div>`;
+  const u=activityStream(acts=>{
+    const L=document.getElementById("lijst"); if(!L)return;
+    if(!acts.length){L.innerHTML=`<div class="kaart"><div class="center">Geen komende activiteiten.</div></div>`;return;}
+    L.innerHTML=acts.map(a=>`<div class="kaart" id="card-${a.id}">
+      <div class="info"><div class="titel">${titel(a)}</div><div class="sub">${subline(a)}</div></div>
+      <div class="tel" id="tel-${a.id}"></div><div id="mij-${a.id}"></div>
+      <span class="roster-toggle" id="rt-${a.id}">Bekijk wie er komt ▾</span>
+      <div class="roster" id="roster-${a.id}" style="display:none"></div></div>`).join("");
     acts.forEach(a=>bindCard(a));
   });
   unsub.push(u);
 }
-
-function actCard(a){
-  const d=new Date(a.date);
-  return `<div class="kaart" id="card-${a.id}">
-    <div class="act-kop">
-      <div class="act-datum"><div class="d">${d.getDate()}</div><div class="m">${MAAND[d.getMonth()]}</div></div>
-      <div class="act-info"><div class="titel">${esc(a.title)}</div>
-        <div class="sub">${DAG[d.getDay()]} ${d.getDate()} ${MAAND[d.getMonth()]}${a.type?' · '+esc(a.type):''}</div></div>
-    </div>
-    <div class="tel" id="tel-${a.id}"></div>
-    <div id="mij-${a.id}"></div>
-    <span class="roster-toggle" id="rt-${a.id}">Bekijk wie er komt ▾</span>
-    <div class="roster" id="roster-${a.id}" style="display:none"></div>
-  </div>`;
-}
-
 function bindCard(a){
-  const u = onSnapshot(collection(db,"activities",a.id,"rsvp"), snap=>{
+  const u=onSnapshot(collection(db,"activities",a.id,"rsvp"),snap=>{
     const map={}; snap.docs.forEach(d=>map[d.id]=d.data().status);
-    let ins=0,outs=0;
-    PLAYERS.forEach(p=>{ if(map[p.id]==='in')ins++; else if(map[p.id]==='out')outs++; });
+    let ins=0,outs=0; PLAYERS.forEach(p=>{if(map[p.id]==='in')ins++;else if(map[p.id]==='out')outs++;});
     const none=PLAYERS.length-ins-outs;
     const tel=document.getElementById("tel-"+a.id);
-    if(tel) tel.innerHTML=`<span class="g">${ins} aanwezig</span><span class="r">${outs} afwezig</span><span class="n">${none} geen reactie</span>`;
-    // mijn kind
-    if(MYUSER && MYUSER.playerId){
-      const st=map[MYUSER.playerId]||'none';
-      const p=PLAYERS.find(x=>x.id===MYUSER.playerId);
+    if(tel)tel.innerHTML=`<span class="g">${ins} aanwezig</span><span class="r">${outs} afwezig</span><span class="n">${none} geen reactie</span>`;
+    if(MYUSER&&MYUSER.playerId){
+      const st=map[MYUSER.playerId]||'none'; const p=PLAYERS.find(x=>x.id===MYUSER.playerId);
       const mij=document.getElementById("mij-"+a.id);
-      if(mij) mij.innerHTML=`<div class="mij"><div class="lbl">${p?esc(p.name):'Mijn dochter'} — ben je erbij?</div>
-        <div class="kies">
-          <button class="${st==='in'?'aan-in':''}" data-a="${a.id}" data-s="in">Aanwezig</button>
-          <button class="${st==='out'?'aan-out':''}" data-a="${a.id}" data-s="out">Afwezig</button>
-        </div></div>`;
-      if(mij) mij.querySelectorAll("button").forEach(b=>b.onclick=()=>zetRsvp(a.id,MYUSER.playerId,b.dataset.s));
+      if(mij){mij.innerHTML=`<div class="mij"><div class="lbl">${p?esc(p.name):'Mijn dochter'} — ben je erbij?</div>
+        <div class="kies"><button class="${st==='in'?'aan-in':''}" data-s="in">Aanwezig</button>
+        <button class="${st==='out'?'aan-out':''}" data-s="out">Afwezig</button></div></div>`;
+        mij.querySelectorAll("button").forEach(b=>b.onclick=()=>zetRsvp(a.id,MYUSER.playerId,b.dataset.s));}
     }
-    // roster
     const roster=document.getElementById("roster-"+a.id);
-    if(roster && roster.style.display!=='none'){ vulRoster(a,map); }
+    if(roster&&roster.style.display!=='none') vulRoster(a,map);
     const rt=document.getElementById("rt-"+a.id);
-    if(rt) rt.onclick=()=>{
-      const r=document.getElementById("roster-"+a.id);
-      if(r.style.display==='none'){ r.style.display='block'; vulRoster(a,map); rt.textContent='Verberg ▴'; }
-      else{ r.style.display='none'; rt.textContent='Bekijk wie er komt ▾'; }
-    };
+    if(rt)rt.onclick=()=>{const r=document.getElementById("roster-"+a.id);
+      if(r.style.display==='none'){r.style.display='block';vulRoster(a,map);rt.textContent='Verberg ▴';}
+      else{r.style.display='none';rt.textContent='Bekijk wie er komt ▾';}};
   });
   unsub.push(u);
 }
-
 function vulRoster(a,map){
-  const r=document.getElementById("roster-"+a.id); if(!r) return;
-  r.innerHTML = PLAYERS.map(p=>{
-    const st=map[p.id]||'none';
+  const r=document.getElementById("roster-"+a.id); if(!r)return;
+  r.innerHTML=PLAYERS.map(p=>{const st=map[p.id]||'none';
     const lab={in:'Aanwezig',out:'Afwezig',none:'Geen reactie'}[st];
-    return `<div class="rrow"><div class="nm">${esc(p.name)}</div><span class="chip ${st}">${lab}</span></div>`;
-  }).join("");
+    return `<div class="rrow"><div class="nm">${esc(p.name)}</div><span class="chip ${st}">${lab}</span></div>`;}).join("");
 }
-
 async function zetRsvp(actId,playerId,status){
-  try{ await setDoc(doc(db,"activities",actId,"rsvp",playerId),{status,uid:ME.uid,ts:serverTimestamp()}); }
-  catch(e){ alert("Kon niet opslaan: "+e.message); }
+  try{await setDoc(doc(db,"activities",actId,"rsvp",playerId),{status,uid:ME.uid,ts:serverTimestamp()});}
+  catch(e){alert("Kon niet opslaan: "+e.message);}
 }
 
-// ---------- BEHEER (admin) ----------
-async function openBeheer(){
+// ---------- TEAM ----------
+async function viewTeam(){
+  el.innerHTML=`<h2>Team</h2><div id="lijst"><div class="center">Laden…</div></div>`;
+  await loadPlayers();
+  const L=document.getElementById("lijst");
+  if(!PLAYERS.length){L.innerHTML=`<div class="kaart"><div class="center">De teamlijst is nog niet ingesteld.${isAdmin()?' Ga naar Beheer om de speelsters in te laden.':''}</div></div>`;return;}
+  L.innerHTML=`<div class="kaart">${PLAYERS.map(p=>`<div class="rrow"><div class="nm">${esc(p.name)}</div></div>`).join("")}</div>
+    <p class="mini">Contactgegevens komen hier later bij (bellen, mailen, adres). Alleen zichtbaar voor ingelogde teamleden.</p>`;
+}
+
+// ---------- BEHEER ----------
+async function viewBeheer(){
   if(!(await biometric())) return;
-  const body=document.getElementById("body");
-  body.innerHTML = `
+  el.innerHTML=`
     <h2>Instellen</h2>
     <div class="kaart">
       <p class="mini">Eenmalig: laad de 11 speelsters en de eerste oefenwedstrijd (29 aug) in. Bestaande gegevens blijven staan.</p>
-      <button class="knop grijs" id="seed">Speelsters &amp; eerste wedstrijd inladen</button>
-      <div id="seedmsg"></div>
+      <button class="knop grijs" id="seed">Speelsters &amp; eerste wedstrijd inladen</button><div id="seedmsg"></div>
     </div>
     <h2>Nieuwe activiteit</h2>
     <div class="kaart">
-      <input id="btitel" placeholder="Titel (bijv. Wedstrijd vs. Blauw of Training)">
-      <input id="bdatum" type="date">
-      <input id="btype" placeholder="Type (Wedstrijd / Training / Toernooi)">
-      <button class="knop" id="btoevoeg">Activiteit toevoegen</button>
-      <div id="bfout"></div>
+      <input id="btitel" placeholder="Titel (bijv. Training) of laat leeg bij wedstrijd">
+      <label class="veldlbl">Datum</label><input id="bdatum" type="date">
+      <label class="veldlbl">Tijd (optioneel)</label><input id="btijd" type="time">
+      <label class="veldlbl">Type</label>
+      <select id="btype"><option>Wedstrijd</option><option>Oefenwedstrijd</option><option>Training</option><option>Toernooi</option><option>Anders</option></select>
+      <label class="veldlbl">Tegenstander (bij wedstrijd)</label><input id="btegen" placeholder="bijv. Blauw">
+      <label class="veldlbl">Thuis / uit</label>
+      <select id="bhome"><option value="">—</option><option>Thuis</option><option>Uit</option></select>
+      <label class="veldlbl">Locatie (bij uit; thuis = Sportpark Harga)</label><input id="bloc" placeholder="adres of veld">
+      <button class="knop" id="btoevoeg">Activiteit toevoegen</button><div id="bfout"></div>
+    </div>
+    <h2>Wekelijkse trainingen</h2>
+    <div class="kaart">
+      <p class="mini">Zet één keer de vaste trainingsdag en -tijd; de trainingen worden dan tot de einddatum aangemaakt.</p>
+      <label class="veldlbl">Dag</label>
+      <select id="tdag"><option value="1">Maandag</option><option value="2">Dinsdag</option><option value="3">Woensdag</option><option value="4">Donderdag</option><option value="5">Vrijdag</option><option value="6">Zaterdag</option><option value="0">Zondag</option></select>
+      <label class="veldlbl">Tijd</label><input id="ttijd" type="time" value="18:00">
+      <label class="veldlbl">Van</label><input id="tvan" type="date">
+      <label class="veldlbl">Tot en met</label><input id="ttot" type="date">
+      <button class="knop grijs" id="tgen">Trainingen aanmaken</button><div id="tmsg"></div>
     </div>
     <h2>Geverifieerde opkomst</h2>
     <p class="mini" style="margin-bottom:8px">Zet per speler de échte opkomst. Een afwijking t.o.v. de bevestiging wordt gemarkeerd.</p>
-    <div id="verifwrap"><div class="center">Laden…</div></div>`;
-  document.getElementById("seed").onclick = async ()=>{
-    const m=document.getElementById("seedmsg");
-    try{
-      const ps = await getDocs(collection(db,"players"));
-      if(ps.empty){ for(let i=0;i<SPELERS.length;i++){ await setDoc(doc(db,"players","p"+(i+1)),{name:SPELERS[i]}); } }
-      const as = await getDocs(collection(db,"activities"));
-      if(as.empty){ await setDoc(doc(collection(db,"activities")),{title:"Oefenwedstrijd",date:"2026-08-29",type:"Oefenwedstrijd",ts:serverTimestamp()}); }
-      m.className="meld"; m.textContent="Klaar — speelsters en activiteit staan klaar.";
-      await loadPlayers();
-    }catch(e){ m.className="fout"; m.textContent=e.message; }
-  };
-  document.getElementById("btoevoeg").onclick = async ()=>{
-    const t=document.getElementById("btitel").value.trim();
-    const d=document.getElementById("bdatum").value;
-    const ty=document.getElementById("btype").value.trim();
-    if(!t||!d){ document.getElementById("bfout").className="fout"; document.getElementById("bfout").textContent="Titel en datum zijn verplicht."; return; }
-    try{ await setDoc(doc(collection(db,"activities")),{title:t,date:d,type:ty,ts:serverTimestamp()});
-      document.getElementById("btitel").value=""; document.getElementById("btype").value="";
-      const m=document.getElementById("bfout"); m.className="meld"; m.textContent="Toegevoegd.";
-    }catch(e){ document.getElementById("bfout").className="fout"; document.getElementById("bfout").textContent=e.message; }
-  };
-  const u = activityStream(acts=>{
-    const w=document.getElementById("verifwrap");
-    if(!w) return;
-    if(!acts.length){ w.innerHTML=`<div class="kaart"><div class="center">Nog geen activiteiten.</div></div>`; return; }
-    w.innerHTML = acts.map(a=>`<div class="kaart" id="vcard-${a.id}">
-      <div class="act-info"><div class="titel">${esc(a.title)}</div>
-      <div class="sub">${fmt(a.date)}${a.type?' · '+esc(a.type):''}</div></div>
+    <div id="verifwrap"><div class="center">Laden…</div></div>
+    <a class="knop grijs" id="trendknop">Bekijk trends ›</a>`;
+  document.getElementById("seed").onclick=doSeed;
+  document.getElementById("btoevoeg").onclick=doAddActivity;
+  document.getElementById("tgen").onclick=doGenTrainings;
+  document.getElementById("trendknop").onclick=(e)=>{e.preventDefault();openTrends();};
+  const u=activityStream(acts=>{
+    const w=document.getElementById("verifwrap"); if(!w)return;
+    if(!acts.length){w.innerHTML=`<div class="kaart"><div class="center">Nog geen activiteiten.</div></div>`;return;}
+    w.innerHTML=acts.map(a=>`<div class="kaart"><div class="info"><div class="titel">${titel(a)}</div><div class="sub">${subline(a)}</div></div>
       <div id="vlist-${a.id}" style="margin-top:10px"></div></div>`).join("");
     acts.forEach(a=>bindVerif(a));
   });
   unsub.push(u);
 }
-
+async function doSeed(){
+  const m=document.getElementById("seedmsg");
+  try{
+    const ps=await getDocs(collection(db,"players"));
+    if(ps.empty){for(let i=0;i<SPELERS.length;i++){await setDoc(doc(db,"players","p"+(i+1)),{name:SPELERS[i]});}}
+    const as=await getDocs(collection(db,"activities"));
+    if(as.empty){await setDoc(doc(collection(db,"activities")),{title:"Oefenwedstrijd",date:"2026-08-29",type:"Oefenwedstrijd",ts:serverTimestamp()});}
+    m.className="meld";m.textContent="Klaar — speelsters en activiteit staan klaar."; await loadPlayers();
+  }catch(e){m.className="fout";m.textContent=e.message;}
+}
+async function doAddActivity(){
+  const f=document.getElementById("bfout");
+  const t=val("btitel"), d=val("bdatum"), tijd=val("btijd"), type=document.getElementById("btype").value,
+    teg=val("btegen"), home=document.getElementById("bhome").value, loc=val("bloc");
+  if(!d){f.className="fout";f.textContent="Datum is verplicht.";return;}
+  const title = t || (teg? "Wedstrijd" : type);
+  try{ await setDoc(doc(collection(db,"activities")),{title,date:d,time:tijd||"",type,opponent:teg||"",homeAway:home||"",location:loc||"",ts:serverTimestamp()});
+    ["btitel","btegen","bloc"].forEach(id=>document.getElementById(id).value="");
+    f.className="meld";f.textContent="Toegevoegd.";
+  }catch(e){f.className="fout";f.textContent=e.message;}
+}
+async function doGenTrainings(){
+  const m=document.getElementById("tmsg");
+  const wd=+document.getElementById("tdag").value, tijd=val("ttijd"), van=val("tvan"), tot=val("ttot");
+  if(!van||!tot){m.className="fout";m.textContent="Vul een begin- en einddatum in.";return;}
+  try{
+    let d=new Date(van), end=new Date(tot), n=0;
+    while(d.getDay()!==wd){ d.setDate(d.getDate()+1); }
+    while(d<=end && n<60){
+      const ds=d.toISOString().slice(0,10);
+      await setDoc(doc(db,"activities","train-"+ds),{title:"Training",date:ds,time:tijd||"",type:"Training",opponent:"",homeAway:"",location:"",ts:serverTimestamp()});
+      n++; d.setDate(d.getDate()+7);
+    }
+    m.className="meld";m.textContent=n+" trainingen aangemaakt.";
+  }catch(e){m.className="fout";m.textContent=e.message;}
+}
 function bindVerif(a){
-  const u = onSnapshot(collection(db,"activities",a.id,"rsvp"), rsnap=>{
-    const rmap={}; rsnap.docs.forEach(d=>rmap[d.id]=d.data().status);
-    const u2 = onSnapshot(collection(db,"activities",a.id,"actual"), asnap=>{
-      const amap={}; asnap.docs.forEach(d=>amap[d.id]=d.data().present);
-      const list=document.getElementById("vlist-"+a.id); if(!list) return;
-      list.innerHTML = PLAYERS.map(p=>{
-        const rv=rmap[p.id]||'none', av=amap[p.id];
-        const mis = (av!==undefined) && ((rv==='in'&&av===false)||(rv!=='in'&&av===true));
-        return `<div class="rrow"><div class="nm">${esc(p.name)}<div class="mini">bevestigd: ${ {in:'aanwezig',out:'afwezig',none:'geen reactie'}[rv] }</div></div>
-          <div class="verif">
-            <button class="${av===true?'on-in':''}" data-a="${a.id}" data-p="${p.id}" data-v="1">Was er</button>
-            <button class="${av===false?'on-out':''}" data-a="${a.id}" data-p="${p.id}" data-v="0">Niet</button>
-            ${mis?'<span class="afw">afwijking</span>':''}
-          </div></div>`;
-      }).join("");
+  const u=onSnapshot(collection(db,"activities",a.id,"rsvp"),rsnap=>{
+    const rmap={};rsnap.docs.forEach(d=>rmap[d.id]=d.data().status);
+    const u2=onSnapshot(collection(db,"activities",a.id,"actual"),asnap=>{
+      const amap={};asnap.docs.forEach(d=>amap[d.id]=d.data().present);
+      const list=document.getElementById("vlist-"+a.id); if(!list)return;
+      list.innerHTML=PLAYERS.map(p=>{const rv=rmap[p.id]||'none',av=amap[p.id];
+        const mis=(av!==undefined)&&((rv==='in'&&av===false)||(rv!=='in'&&av===true));
+        return `<div class="rrow"><div class="nm">${esc(p.name)}<div class="mini">bevestigd: ${{in:'aanwezig',out:'afwezig',none:'geen reactie'}[rv]}</div></div>
+          <div class="verif"><button class="${av===true?'on-in':''}" data-p="${p.id}" data-v="1">Was er</button>
+          <button class="${av===false?'on-out':''}" data-p="${p.id}" data-v="0">Niet</button>
+          ${mis?'<span class="afw">afwijking</span>':''}</div></div>`;}).join("");
       list.querySelectorAll("button").forEach(b=>b.onclick=()=>zetActual(a.id,b.dataset.p,b.dataset.v==='1'));
-    });
-    unsub.push(u2);
-  });
-  unsub.push(u);
+    }); unsub.push(u2);
+  }); unsub.push(u);
 }
-
 async function zetActual(actId,playerId,present){
-  try{ await setDoc(doc(db,"activities",actId,"actual",playerId),{present,uid:ME.uid,ts:serverTimestamp()}); }
-  catch(e){ alert("Kon niet opslaan: "+e.message); }
+  try{await setDoc(doc(db,"activities",actId,"actual",playerId),{present,uid:ME.uid,ts:serverTimestamp()});}
+  catch(e){alert("Kon niet opslaan: "+e.message);}
 }
-
-// ---------- TRENDS (admin) ----------
 async function openTrends(){
-  if(!(await biometric())) return;
-  const body=document.getElementById("body");
-  body.innerHTML=`<h2>Trends</h2><div id="tw"><div class="center">Berekenen…</div></div>`;
+  clearSubs();
+  el.innerHTML=`<span class="terug" id="terug">‹ Beheer</span><h2>Trends</h2><div id="tw"><div class="center">Berekenen…</div></div>`;
+  document.getElementById("terug").onclick=()=>{TAB="beheer";buildTabbar();route();};
   await loadPlayers();
-  const asnap = await getDocs(query(collection(db,"activities"),orderBy("date")));
-  const acts = asnap.docs.map(d=>({id:d.id,...d.data()}));
-  const stat={}; PLAYERS.forEach(p=>stat[p.id]={naam:p.name,tot:acts.length,geen:0,bevestigdIn:0,verifTot:0,verifAanwezig:0,noshow:0});
+  const asnap=await getDocs(query(collection(db,"activities"),orderBy("date")));
+  const acts=asnap.docs.map(d=>({id:d.id,...d.data()}));
+  const stat={};PLAYERS.forEach(p=>stat[p.id]={tot:acts.length,geen:0,verifTot:0,verifAan:0,noshow:0});
   for(const a of acts){
-    const rs=await getDocs(collection(db,"activities",a.id,"rsvp"));
-    const rmap={}; rs.docs.forEach(d=>rmap[d.id]=d.data().status);
-    const as=await getDocs(collection(db,"activities",a.id,"actual"));
-    const amap={}; as.docs.forEach(d=>amap[d.id]=d.data().present);
-    PLAYERS.forEach(p=>{
-      const rv=rmap[p.id]||'none';
-      if(rv==='none') stat[p.id].geen++;
-      if(rv==='in') stat[p.id].bevestigdIn++;
-      if(amap[p.id]!==undefined){ stat[p.id].verifTot++; if(amap[p.id]) stat[p.id].verifAanwezig++;
-        if(rv==='in' && amap[p.id]===false) stat[p.id].noshow++; }
-    });
+    const rs=await getDocs(collection(db,"activities",a.id,"rsvp")); const rmap={};rs.docs.forEach(d=>rmap[d.id]=d.data().status);
+    const as=await getDocs(collection(db,"activities",a.id,"actual")); const amap={};as.docs.forEach(d=>amap[d.id]=d.data().present);
+    PLAYERS.forEach(p=>{const rv=rmap[p.id]||'none';
+      if(rv==='none')stat[p.id].geen++;
+      if(amap[p.id]!==undefined){stat[p.id].verifTot++;if(amap[p.id])stat[p.id].verifAan++;if(rv==='in'&&amap[p.id]===false)stat[p.id].noshow++;}});
   }
-  const rows=PLAYERS.map(p=>{
-    const s=stat[p.id];
-    const opk = s.verifTot? Math.round(100*s.verifAanwezig/s.verifTot)+'%' : '—';
-    return `<div class="rrow"><div class="nm">${esc(p.name)}
-      <div class="mini">geen reactie: ${s.geen}/${s.tot} · niet gekomen ondanks toezegging: ${s.noshow}</div></div>
-      <span class="chip ${s.verifTot&&s.verifAanwezig/s.verifTot>=0.6?'in':'none'}">opkomst ${opk}</span></div>`;
-  }).join("");
-  document.getElementById("tw").innerHTML = `<div class="kaart">${rows}</div>
-    <p class="mini">Opkomst = geverifieerd aanwezig ÷ geverifieerde activiteiten. "Geen reactie" en "niet gekomen ondanks toezegging" helpen je zien wie structureel niet bevestigt of afzegt.</p>`;
+  const rows=PLAYERS.map(p=>{const s=stat[p.id];const opk=s.verifTot?Math.round(100*s.verifAan/s.verifTot)+'%':'—';
+    return `<div class="rrow"><div class="nm">${esc(p.name)}<div class="mini">geen reactie: ${s.geen}/${s.tot} · niet gekomen ondanks toezegging: ${s.noshow}</div></div>
+      <span class="chip ${s.verifTot&&s.verifAan/s.verifTot>=0.6?'in':'none'}">opkomst ${opk}</span></div>`;}).join("");
+  document.getElementById("tw").innerHTML=`<div class="kaart">${rows}</div>
+    <p class="mini">Opkomst = geverifieerd aanwezig ÷ geverifieerde activiteiten.</p>`;
 }
 
-// ---------- BIOMETRISCH SLOT (beheer) ----------
+// ---------- BIOMETRISCH SLOT ----------
 async function biometric(){
   if(biometricOk) return true;
-  if(!window.PublicKeyCredential){ biometricOk=true; return true; }
+  if(!window.PublicKeyCredential){biometricOk=true;return true;}
   try{
-    const challenge = new Uint8Array(32); crypto.getRandomValues(challenge);
-    await navigator.credentials.get({ publicKey:{
-      challenge, timeout:60000, userVerification:"required", rpId:location.hostname, allowCredentials:[] }});
-    biometricOk=true; return true;
-  }catch(e){
-    // Geen passkey geregistreerd of geannuleerd: we laten beheer toch toe (login zelf is al beveiligd),
-    // maar tonen een melding. Zo blokkeert het slot je niet als er nog geen biometrie is ingesteld.
-    biometricOk=true; return true;
-  }
+    const challenge=new Uint8Array(32);crypto.getRandomValues(challenge);
+    await navigator.credentials.get({publicKey:{challenge,timeout:60000,userVerification:"required",rpId:location.hostname,allowCredentials:[]}});
+    biometricOk=true;return true;
+  }catch(e){ biometricOk=true; return true; }
 }
 </script>
 </body>
