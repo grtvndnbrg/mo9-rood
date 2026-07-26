@@ -583,7 +583,7 @@ async function openTrends(){
 
 // ---------- DIENSTEN / CARPOOL ----------
 const CP={dir:"heen",act:null,present:[]};
-let cpSeats=3, cpPick=null;
+let cpSeats=3, cpPick=null, cpName="";
 function viewDiensten(){
   el.innerHTML=`<h2>Diensten — carpool</h2>
     <p class="mini" style="margin-bottom:8px">Kies een activiteit om de carpool te regelen (vooral voor uitwedstrijden).</p>
@@ -608,6 +608,7 @@ async function openCarpool(actId){
   const rs=await getDocs(collection(db,"activities",actId,"rsvp"));
   const out={}; rs.docs.forEach(d=>{ if(d.data().status==='out') out[d.id]=1; });
   CP.present=PLAYERS.filter(p=>!out[p.id]).map(p=>({id:p.id,name:p.name}));
+  cpName=(MYUSER&&MYUSER.name)||"";
   subscribeCarpool();
 }
 function cpRef(){ return doc(db,"activities",CP.act.id,"carpool",CP.dir); }
@@ -617,7 +618,7 @@ function subscribeCarpool(){
   unsub.push(u);
 }
 async function cpSet(obj){ try{ await setDoc(cpRef(), obj, {merge:true}); }catch(e){ alert("Kon niet opslaan: "+e.message);} }
-function carsOf(data){ const m=data.cars||{}; return Object.keys(m).filter(id=>m[id]&&m[id].name).map(id=>({id,name:m[id].name,seats:m[id].seats||1,klaar:!!m[id].klaar})); }
+function carsOf(data){ const m=data.cars||{}; return Object.keys(m).filter(id=>m[id]&&m[id].name).map(id=>({id,name:m[id].name,seats:m[id].seats||1,klaar:!!m[id].klaar,owner:m[id].owner})); }
 function locOf(data,pid){ const cid=(data.assign||{})[pid]; const m=data.cars||{}; return (cid&&m[cid]&&m[cid].name)?cid:null; }
 function waText(data){ const cars=carsOf(data);
   let t=`🚗 Carpool MO9 Rood — ${titel(CP.act)} (${subline(CP.act)})\n${CP.dir==='heen'?'Heenreis':'Terugreis'}\n`;
@@ -629,7 +630,6 @@ function drawCarpool(data){
   const a=CP.act, dir=CP.dir, cars=carsOf(data);
   const kidsIn=cid=>CP.present.filter(p=>locOf(data,p.id)===cid);
   const los=CP.present.filter(p=>!locOf(data,p.id));
-  const iAm=(data.cars||{})[ME.uid] && (data.cars||{})[ME.uid].name;
   const totVrij=cars.reduce((s,c)=>s+(c.seats-kidsIn(c.id).length),0);
   const alle=cars.length&&cars.every(c=>c.klaar)&&!los.length;
   const fmtC=ms=>{const d=new Date(ms);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
@@ -637,20 +637,20 @@ function drawCarpool(data){
   const banner=los.length?`<div class="fout">${los.length} kind(eren) zonder plek — meld een auto aan of deel ze in.</div>`:(cars.length?`<div class="meld">Iedereen heeft een plek ✓ · ${totVrij} stoel(en) over.</div>`:`<div class="mini">Nog geen auto's aangemeld.</div>`);
   const sb='width:26px;height:26px;border:1px solid var(--lijn);background:#fff;border-radius:7px;font-size:16px;cursor:pointer;line-height:1';
   const seg=`<div style="display:flex;background:#f1efe9;border-radius:10px;padding:3px;margin:10px 0 12px"><button id="dh" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='heen'?'#fff':'none'};color:${dir==='heen'?'var(--rood)':'var(--grijs)'}">Heen</button><button id="dt" style="flex:1;border:none;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer;background:${dir==='terug'?'#fff':'none'};color:${dir==='terug'?'var(--rood)':'var(--grijs)'}">Terug</button></div>`;
-  let zelf;
-  if(!iAm){ zelf=`<div class="kaart"><b style="font-size:13px">Ik kan rijden</b>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;color:var(--grijs)">Plekken: <button id="sm" style="${sb}">−</button> <b>${cpSeats}</b> <button id="sp" style="${sb}">+</button></span><button id="aan" class="knop" style="width:auto;margin-top:0;padding:9px 16px">Aanmelden</button></div>
-    <div class="mini" style="margin-top:6px">Je auto komt leeg binnen; jij deelt zelf kinderen in.</div></div>`;
-  } else { zelf=`<div class="kaart" style="background:var(--groen-licht);border-color:var(--groen-licht-rand)"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>Jij rijdt mee</b><div class="mini">Pas je plekken aan bij je auto</div></div><button id="af" class="knop grijs" style="width:auto;margin-top:0;padding:8px 13px">Ik kan toch niet</button></div></div>`; }
+  const zelf=`<div class="kaart"><b style="font-size:13px">Auto aanmelden</b>
+    <input id="cpnaam" placeholder="Naam (bijv. jouw naam, of 'Opa Jan')" value="${esc(cpName)}">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><span style="font-size:13px;color:var(--grijs)">Plekken: <button id="sm" style="${sb}">−</button> <b>${cpSeats}</b> <button id="sp" style="${sb}">+</button></span><button id="aan" class="knop" style="width:auto;margin-top:0;padding:9px 16px">Toevoegen</button></div>
+    <div class="mini" style="margin-top:6px">Voor jezelf of namens iemand anders (opa/oma, vriend). Meerdere auto's toevoegen kan.</div></div>`;
   const chip=(p,curcid)=>{ const opened=cpPick===p.id; let panel='';
-    if(opened){ const curName=curcid?((cars.find(c=>c.id===curcid)||{}).name||''):''; const dests=cars.filter(c=>c.id!==curcid).map(c=>{const vrij=c.seats-kidsIn(c.id).length;return `<button data-assign="${p.id}|${c.id}" ${vrij<=0?'disabled':''} style="display:block;width:100%;text-align:left;border:none;background:none;padding:7px 4px;font-size:13px;cursor:${vrij<=0?'default':'pointer'};color:${vrij<=0?'var(--lichtgrijs)':'var(--tekst)'}">🚗 ${esc(c.name)} ${vrij>0?`· ${vrij} vrij`:'· vol'}</button>`;}).join('');
+    if(opened){ const curName=curcid?((cars.find(c=>c.id===curcid)||{}).name||''):'';
+      const dests=cars.filter(c=>c.id!==curcid).map(c=>{const vrij=c.seats-kidsIn(c.id).length;return `<button data-assign="${p.id}|${c.id}" ${vrij<=0?'disabled':''} style="display:block;width:100%;text-align:left;border:none;background:none;padding:7px 4px;font-size:13px;cursor:${vrij<=0?'default':'pointer'};color:${vrij<=0?'var(--lichtgrijs)':'var(--tekst)'}">🚗 ${esc(c.name)} ${vrij>0?`· ${vrij} vrij`:'· vol'}</button>`;}).join('');
       const losOpt = curcid? `<button data-assign="${p.id}|_los" style="display:block;width:100%;text-align:left;border:none;background:none;padding:7px 4px;font-size:13px;cursor:pointer;color:var(--rood)">↩︎ Uit de auto (nog in te delen)</button>`:'';
       panel=`<div style="margin-top:6px;background:#faf9f6;border:1px solid var(--lijn);border-radius:10px;padding:6px 9px"><div class="mini" style="margin-bottom:2px">${esc(p.name)} → kies:</div>${curName?`<div class="mini" style="margin-bottom:4px">Zit nu bij <b>${esc(curName)}</b></div>`:''}${dests||'<div class="mini">Geen andere auto met plek</div>'}${losOpt}</div>`; }
     return `<div style="display:inline-block"><span data-pick="${p.id}" class="chip none" style="cursor:pointer">${esc(p.name)}</span>${panel}</div>`; };
-  const carsHtml=cars.map(c=>{ const kids=kidsIn(c.id); const vrij=c.seats-kids.length, over=vrij<0, mine=c.id===ME.uid;
+  const carsHtml=cars.map(c=>{ const kids=kidsIn(c.id); const vrij=c.seats-kids.length, over=vrij<0, mine=c.owner===ME.uid;
     return `<div class="kaart" style="${over?'border-color:#E24B4A':''}">
       <div style="display:flex;align-items:center;gap:8px"><div style="flex:1"><b>🚗 ${esc(c.name)}${mine?' (jij)':''}</b>
-        <div class="mini" style="margin-top:3px">bezet ${kids.length} · plekken <button data-sm="${c.id}" style="${sb}">−</button> <b>${c.seats}</b> <button data-sp="${c.id}" style="${sb}">+</button>${over?' <span style="color:#791F1F">te vol!</span>':(vrij>0?` · ${vrij} vrij`:' · vol')}</div></div>
+        <div class="mini" style="margin-top:3px">bezet ${kids.length} · plekken <button data-sm="${c.id}" style="${sb}">−</button> <b>${c.seats}</b> <button data-sp="${c.id}" style="${sb}">+</button>${over?' <span style="color:#791F1F">te vol!</span>':(vrij>0?` · ${vrij} vrij`:' · vol')}${(c.owner===ME.uid||isAdmin())?` · <span data-verwijder="${c.id}" style="color:var(--rood);cursor:pointer">verwijderen</span>`:''}</div></div>
         <button data-klaar="${c.id}" style="border:1px solid ${c.klaar?'var(--groen)':'var(--lijn)'};background:${c.klaar?'var(--groen)':'#fff'};color:${c.klaar?'#fff':'var(--grijs)'};border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;align-self:flex-start">${c.klaar?'compleet ✓':'compleet?'}</button></div>
       <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:6px">${kids.map(p=>chip(p,c.id)).join('')||'<span class="mini">— nog leeg, deel kinderen in —</span>'}</div></div>`;}).join('');
   const losHtml=los.length?`<div class="kaart" style="border-style:dashed;border-color:#E24B4A"><div class="mini" style="color:#791F1F;font-weight:600;margin-bottom:6px">Nog in te delen — tik een kind om een auto te kiezen</div><div style="display:flex;flex-wrap:wrap;gap:6px">${los.map(p=>chip(p,null)).join('')}</div></div>`:'';
@@ -672,11 +672,11 @@ function wireCarpool(data,cars){
   const sm=document.getElementById("sm"),sp=document.getElementById("sp");
   if(sm)sm.onclick=()=>{cpSeats=Math.max(1,cpSeats-1);drawCarpool(data);};
   if(sp)sp.onclick=()=>{cpSeats=Math.min(6,cpSeats+1);drawCarpool(data);};
+  const naamEl=document.getElementById("cpnaam");
+  if(naamEl)naamEl.oninput=()=>{cpName=naamEl.value;};
   const aan=document.getElementById("aan");
-  if(aan)aan.onclick=()=>cpSet({cars:{[ME.uid]:{name:(MYUSER&&MYUSER.name)||ME.email||"Ik",seats:cpSeats,klaar:false}}});
-  const af=document.getElementById("af");
-  if(af)af.onclick=()=>{ if(confirm("Weet je het zeker? Jouw auto valt weg en de kinderen komen zonder plek. Jij zorgt zelf voor vervanging en meldt het in de WhatsApp-groep.")){
-    const upd={cars:{[ME.uid]:null},assign:{},lastChange:{kind:'jouw auto',naar:'uitgevallen',door:(MYUSER&&MYUSER.name)||ME.email||'Iemand',ts:Date.now()}}; CP.present.forEach(p=>{ if((data.assign||{})[p.id]===ME.uid) upd.assign[p.id]=null; }); cpSet(upd);} };
+  if(aan)aan.onclick=()=>{const nm=((document.getElementById("cpnaam").value||'').trim())||((MYUSER&&MYUSER.name)||ME.email||'Auto');const cid='c'+Date.now().toString(36)+Math.floor(Math.random()*1000);cpName=(MYUSER&&MYUSER.name)||'';cpSet({cars:{[cid]:{name:nm,seats:cpSeats,klaar:false,owner:ME.uid}}});};
+  document.querySelectorAll("[data-verwijder]").forEach(b=>b.onclick=()=>{const cid=b.dataset.verwijder;const c=cars.find(x=>x.id===cid);if(confirm("Deze auto verwijderen? De kinderen komen zonder plek — zorg voor vervanging en meld het in de WhatsApp-groep.")){const upd={cars:{[cid]:null},assign:{},lastChange:{kind:c?c.name:'auto',naar:'verwijderd',door:(MYUSER&&MYUSER.name)||ME.email||'Iemand',ts:Date.now()}};CP.present.forEach(p=>{if((data.assign||{})[p.id]===cid)upd.assign[p.id]=null;});cpSet(upd);}});
   document.querySelectorAll("[data-sm]").forEach(b=>b.onclick=()=>{const cid=b.dataset.sm;const c=cars.find(x=>x.id===cid);cpSet({cars:{[cid]:{seats:Math.max(1,c.seats-1)}}});});
   document.querySelectorAll("[data-sp]").forEach(b=>b.onclick=()=>{const cid=b.dataset.sp;const c=cars.find(x=>x.id===cid);cpSet({cars:{[cid]:{seats:Math.min(8,c.seats+1)}}});});
   document.querySelectorAll("[data-klaar]").forEach(b=>b.onclick=()=>{const cid=b.dataset.klaar;const c=cars.find(x=>x.id===cid);cpSet({cars:{[cid]:{klaar:!c.klaar}}});});
