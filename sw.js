@@ -1,4 +1,4 @@
-const CACHE = "mo9-rood-v1";
+const CACHE = "mo9-rood-v2";
 const SHELL = ["./aanwezigheid.html", "./index.html", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png"];
 
@@ -17,13 +17,20 @@ self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
-  // Alleen eigen bestanden via cache; Firebase/Google altijd live.
-  if (url.origin !== location.origin) return;
+  if (url.origin !== location.origin) return;           // Firebase/Google altijd live
   e.respondWith(
     fetch(req).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE).then(c => c.put(req, copy)).catch(()=>{});
+      // Alleen geldige (200) antwoorden bewaren — nooit een 404 of fout onthouden.
+      if (res && res.ok && res.type === "basic") {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy)).catch(()=>{});
+      }
       return res;
-    }).catch(() => caches.match(req).then(r => r || caches.match("./aanwezigheid.html")))
+    }).catch(() => caches.match(req).then(r => {
+      if (r) return r;
+      // Alleen bij paginanavigatie terugvallen op de app; anders de fout laten zien.
+      if (req.mode === "navigate") return caches.match("./aanwezigheid.html");
+      return Response.error();
+    }))
   );
 });
