@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meisjes O9 — Rood</title>
+<style>
+  :root{
+    --rood:#A32D2D; --rood-donker:#791F1F; --rood-licht:#FCEBEB;
+    --tekst:#1c1c1c; --grijs:#5f5f5f; --lichtgrijs:#8a8a8a;
+    --lijn:#e7e3da; --vlak:#ffffff; --pagina:#f5f2ec; --zacht:#faf8f4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--pagina);color:var(--tekst);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;background:var(--vlak);min-height:100vh}
+  header{background:var(--rood);color:#fff;padding:26px 22px 22px}
+  header .kicker{font-size:12px;letter-spacing:.06em;color:#F7C1C1;text-transform:uppercase}
+  header h1{font-size:26px;font-weight:600;margin-top:6px}
+  header .club{font-size:14px;color:#F7C1C1;margin-top:2px}
+  main{padding:20px 18px 40px}
+  h2{font-size:17px;font-weight:600;margin:26px 0 12px}
+  .banner{background:var(--rood-licht);border:1px solid #F3C7C7;border-radius:14px;padding:14px 16px}
+  .banner .t{color:var(--rood-donker);font-weight:600;font-size:14px}
+  .banner .s{color:var(--grijs);font-size:14px;margin-top:3px}
+  .lijst{border:1px solid var(--lijn);border-radius:14px;overflow:hidden}
+  .rij{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--lijn)}
+  .rij:last-child{border-bottom:none}
+  .datum{text-align:center;min-width:42px}
+  .datum .d{font-size:18px;font-weight:600;line-height:1}
+  .datum .m{font-size:11px;color:var(--lichtgrijs);text-transform:uppercase;margin-top:2px}
+  .info{flex:1;min-width:0}
+  .info .titel{font-size:14px;font-weight:600}
+  .info .sub{font-size:13px;color:var(--grijs)}
+  .tag{font-size:11px;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .tag.rood{background:var(--rood-licht);color:var(--rood-donker)}
+  .tag.grijs{background:var(--zacht);color:var(--grijs);border:1px solid var(--lijn)}
+  .diensten{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .dienst{background:var(--zacht);border:1px solid var(--lijn);border-radius:12px;padding:14px 8px;text-align:center}
+  .dienst .ico{font-size:22px}
+  .dienst .lab{font-size:12px;margin-top:6px;color:var(--grijs)}
+  .infoblok{font-size:14px;color:var(--grijs)}
+  .infoblok div{padding:5px 0;border-bottom:1px solid var(--lijn)}
+  .infoblok div:last-child{border-bottom:none}
+  .infoblok b{color:var(--tekst);font-weight:600}
+  footer{background:var(--zacht);border-top:1px solid var(--lijn);padding:16px;text-align:center;color:var(--lichtgrijs);font-size:12px}
+  footer a{color:var(--rood);text-decoration:none}
+  .leeg{color:var(--lichtgrijs);font-size:14px;padding:14px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Teampagina</div>
+    <h1 id="teamnaam">Meisjes O9 — Rood</h1>
+    <div class="club" id="clubnaam">Naam hockeyclub</div>
+  </header>
+  <main>
+    <div id="banner"></div>
+
+    <h2>Komende wedstrijden</h2>
+    <div id="wedstrijden" class="lijst"><div class="leeg">Schema wordt geladen…</div></div>
+
+    <h2>Diensten</h2>
+    <div class="diensten">
+      <div class="dienst"><div class="ico">🚩</div><div class="lab">Scheidsrechter</div></div>
+      <div class="dienst"><div class="ico">🚗</div><div class="lab">Rijden</div></div>
+      <div class="dienst"><div class="ico">🧺</div><div class="lab">Wassen</div></div>
+    </div>
+
+    <h2>Handig om te weten</h2>
+    <div class="infoblok">
+      <div><b>Tenue</b> — rood shirt, scheenbeschermers en bitje verplicht</div>
+      <div><b>Op tijd</b> — graag 15 min voor aanvang aanwezig</div>
+      <div><b>Uitwedstrijden</b> — we rijden met ouders; zie rijschema</div>
+      <div><b>Afmelden</b> — via de WhatsApp-groep, uiterlijk donderdag</div>
+      <div><b>Teammanager</b> — Gert · [telefoon / e-mail]</div>
+    </div>
+  </main>
+  <footer>
+    Bijgewerkt via het teamschema · <a id="volglink" href="#" target="_blank" rel="noopener">volledig schema</a>
+  </footer>
+</div>
+
+<script>
+const CONFIG = {
+  clubNaam: "Naam hockeyclub",
+  teamNaam: "Meisjes O9 — Rood",
+  // Plak hier de ID van je gepubliceerde/gedeelde Schema-Sheet (staat in de URL tussen /d/ en /edit):
+  sheetId: "1VO6c_OI1LSi4gL6oR5eZSJJCDC-b5Oq7KMp0CoEQdEM",
+  maxWedstrijden: 8
+};
+
+const MAAND = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+const VOORBEELD = [
+  {Datum:"2026-08-29",Type:"Oefenwedstrijd",Tegenstander:"nog te bevestigen",["Thuis/Uit"]:"",Aanvang:"",Locatie:"volgt",Scheidsrechter:"",Rijden:"",Wassen:""},
+  {Datum:"2026-09-06",Type:"Wedstrijd",Tegenstander:"Blauw",["Thuis/Uit"]:"Thuis",Aanvang:"09:00",Locatie:"veld 2",Scheidsrechter:"Ilse",Rijden:"",Wassen:""},
+  {Datum:"2026-09-13",Type:"Wedstrijd",Tegenstander:"Groen",["Thuis/Uit"]:"Uit",Aanvang:"10:30",Locatie:"",Scheidsrechter:"",Rijden:"3 auto's",Wassen:""},
+  {Datum:"2026-09-20",Type:"Wedstrijd",Tegenstander:"Geel",["Thuis/Uit"]:"Thuis",Aanvang:"09:00",Locatie:"veld 1",Scheidsrechter:"",Rijden:"",Wassen:"Fam. Gan"}
+];
+
+function parseCSV(text){
+  const rows=[]; let row=[],cur="",q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+    else{ if(c==='"')q=true; else if(c===','){row.push(cur);cur="";}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur="";}
+      else if(c!=='\r')cur+=c; } }
+  if(cur!==""||row.length){row.push(cur);rows.push(row);}
+  const head=rows.shift().map(h=>h.trim());
+  return rows.filter(r=>r.some(c=>c.trim()!=="")).map(r=>{
+    const o={}; head.forEach((h,i)=>o[h]=(r[i]||"").trim()); return o;});
+}
+
+function toDate(s){const p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+
+function render(data){
+  const vandaag=new Date();vandaag.setHours(0,0,0,0);
+  const komend=data.filter(r=>r.Datum&&toDate(r.Datum)>=vandaag)
+    .sort((a,b)=>a.Datum.localeCompare(b.Datum));
+
+  const oefen=komend.find(r=>(r.Type||"").toLowerCase().includes("oefen"));
+  const b=document.getElementById("banner");
+  if(oefen){const d=toDate(oefen.Datum);
+    b.innerHTML=`<div class="banner"><div class="t">⚑ Eerste oefenwedstrijd</div>
+      <div class="s">${["zo","ma","di","wo","do","vr","za"][d.getDay()]} ${d.getDate()} ${MAAND[d.getMonth()]}${oefen.Aanvang?" · "+oefen.Aanvang:""}${oefen.Locatie?" · "+oefen.Locatie:" · tijd en locatie volgen"}</div></div>`;}
+
+  const el=document.getElementById("wedstrijden");
+  const toon=komend.slice(0,CONFIG.maxWedstrijden);
+  if(!toon.length){el.innerHTML='<div class="leeg">Nog geen wedstrijden ingepland.</div>';return;}
+  el.innerHTML=toon.map(r=>{
+    const d=toDate(r.Datum);
+    const tu=r["Thuis/Uit"]||""; const teg=r.Tegenstander||"nog te bepalen";
+    const titel=tu?`${tu} vs. ${teg}`:teg;
+    let sub=[r.Aanvang,r.Locatie].filter(Boolean).join(" · ")||"tijd volgt";
+    let tag="";
+    if(r.Scheidsrechter)tag=`<span class="tag rood">scheids: ${r.Scheidsrechter}</span>`;
+    else if(r.Rijden)tag=`<span class="tag grijs">rijden: ${r.Rijden}</span>`;
+    else if(r.Wassen)tag=`<span class="tag rood">wassen: ${r.Wassen}</span>`;
+    return `<div class="rij"><div class="datum"><div class="d">${d.getDate()}</div><div class="m">${MAAND[d.getMonth()]}</div></div>
+      <div class="info"><div class="titel">${titel}</div><div class="sub">${sub}</div></div>${tag}</div>`;
+  }).join("");
+}
+
+async function laad(){
+  document.getElementById("clubnaam").textContent=CONFIG.clubNaam;
+  document.getElementById("teamnaam").textContent=CONFIG.teamNaam;
+  document.getElementById("volglink").href="https://docs.google.com/spreadsheets/d/"+CONFIG.sheetId+"/edit";
+  try{
+    const url="https://docs.google.com/spreadsheets/d/"+CONFIG.sheetId+"/gviz/tq?tqx=out:csv";
+    const res=await fetch(url);
+    if(!res.ok)throw new Error("geen toegang");
+    const data=parseCSV(await res.text());
+    if(!data.length)throw new Error("leeg");
+    render(data);
+  }catch(e){ render(VOORBEELD); }
+}
+laad();
+</script>
+</body>
+</html>
