@@ -114,7 +114,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   GoogleAuthProvider, signInWithPopup, signOut, setPersistence, browserLocalPersistence }
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc,
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -163,7 +163,7 @@ onAuthStateChanged(auth, async user=>{
   MYUSER=null;
   try{ const us=await getDoc(doc(db,"users",user.uid)); if(us.exists()) MYUSER=us.data(); }catch(e){}
   if(!isAdmin() && (!MYUSER||!MYUSER.playerId)){ await renderOnboarding(); return; }
-  buildTabbar(); TAB="agenda"; route();
+  buildTabbar(); TAB="berichten"; route();
 });
 
 // ---------- LOGIN ----------
@@ -220,7 +220,7 @@ async function renderOnboarding(){
     const naam=val("ounaam"), pid=document.getElementById("kind").value;
     if(!naam||!pid){document.getElementById("fout").className="fout";document.getElementById("fout").textContent="Vul je naam in en kies je dochter.";return;}
     try{ await setDoc(doc(db,"users",ME.uid),{playerId:pid,email:ME.email,name:naam,ts:serverTimestamp()});
-      MYUSER={playerId:pid,email:ME.email,name:naam}; buildTabbar(); TAB="agenda"; route();
+      MYUSER={playerId:pid,email:ME.email,name:naam}; buildTabbar(); TAB="berichten"; route();
     }catch(e){fout(e);}
   };
 }
@@ -231,7 +231,7 @@ async function loadPlayers(){
 
 // ---------- NAV ----------
 function buildTabbar(){
-  const tabs=[["agenda","📅","Agenda"],["aanmelden","✅","Aanmelden"],["diensten","🚗","Diensten"],["overzicht","📊","Overzicht"],["team","👥","Team"]];
+  const tabs=[["berichten","💬","Berichten"],["agenda","📅","Agenda"],["diensten","🚗","Diensten"],["overzicht","📊","Overzicht"],["team","👥","Team"]];
   if(isAdmin()) tabs.push(["beheer","⚙️","Beheer"]);
   tabbar.style.display="flex";
   tabbar.innerHTML=tabs.map(t=>`<button data-tab="${t[0]}" class="${TAB===t[0]?'on':''}"><span class="ic">${t[1]}</span>${t[2]}</button>`).join("");
@@ -239,7 +239,8 @@ function buildTabbar(){
 }
 function route(){
   clearSubs(); window.scrollTo(0,0);
-  if(TAB==="agenda") viewAgenda();
+  if(TAB==="berichten") viewBerichten();
+  else if(TAB==="agenda") viewAgenda();
   else if(TAB==="aanmelden") viewAanmelden();
   else if(TAB==="diensten") viewDiensten();
   else if(TAB==="overzicht") viewOverzicht();
@@ -281,8 +282,9 @@ function viewAgenda(){
       L.innerHTML=shown.map(a=>`<div class="kaart ${a.cancelled?'afg':''}"><div class="rij-item" data-id="${a.id}">
         <div class="datum"><div class="d">${new Date(a.date).getDate()}</div><div class="m">${MAAND[new Date(a.date).getMonth()]}</div></div>
         <div class="info"><div class="titel">${titel(a)}${a.cancelled?'<span class="tag-afg">Afgelast</span>':''}</div><div class="sub">${subline(a)}</div></div>
-        <span class="pijl">›</span></div></div>`).join("");
+        <span class="pijl">›</span></div><div id="q-${a.id}"></div></div>`).join("");
       L.querySelectorAll("[data-id]").forEach(r=>r.onclick=()=>viewActivity(r.dataset.id));
+      if(!past && MYUSER && MYUSER.playerId){ shown.filter(a=>!a.cancelled).forEach(a=>bindQuick(a)); }
     }, past); unsub.push(u);};
   bind();
   document.getElementById("togpast").onclick=(e)=>{past=!past;e.target.textContent=past?"Toon alleen komende":"Toon eerdere activiteiten";bind();};
@@ -743,6 +745,46 @@ async function viewOverzicht(){
       (entries.length?entries.map(e=>`<div style="display:flex;align-items:center;gap:10px;padding:6px 0"><div style="width:130px;font-size:13px;font-weight:500">${esc(e[0])}</div><div style="flex:1;height:14px;background:#f1efe9;border-radius:7px;overflow:hidden"><div style="height:100%;width:${Math.round(100*e[1]/max)}%;background:var(--goud)"></div></div><div style="width:26px;text-align:right;font-size:12px;color:var(--grijs)">${e[1]}×</div></div>`).join(''):'<div class="kaart"><div class="center">Nog niemand ingetekend.</div></div>')+
       `<div class="mini" style="margin-top:10px">"Wie staat nog op nul" per gezin volgt zodra de contactgegevens gekoppeld zijn.</div>`;
   }
+}
+function bindQuick(a){
+  const u=onSnapshot(doc(db,"activities",a.id,"rsvp",MYUSER.playerId), ds=>{
+    const st=ds.exists()?ds.data().status:'none'; const box=document.getElementById("q-"+a.id); if(!box)return;
+    box.innerHTML=`<div style="display:flex;gap:8px;margin-top:10px"><button data-q="${a.id}|in" style="flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid ${st==='in'?'var(--groen)':'var(--lijn)'};background:${st==='in'?'var(--groen)':'#fff'};color:${st==='in'?'#fff':'var(--grijs)'}">Aanwezig</button><button data-q="${a.id}|out" style="flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid ${st==='out'?'var(--rood-chip-rand)':'var(--lijn)'};background:${st==='out'?'var(--rood-chip)':'#fff'};color:${st==='out'?'var(--rood-chip-tekst)':'var(--grijs)'}">Afmelden</button></div>`;
+    box.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const p=b.dataset.q.split('|');zetRsvp(p[0],MYUSER.playerId,p[1]);});
+  });
+  unsub.push(u);
+}
+// ---------- BERICHTEN ----------
+function viewBerichten(){
+  el.innerHTML=`<h2>Berichten</h2>
+    ${isAdmin()?`<div class="kaart" style="background:var(--rood-licht);border-color:#F3C7C7"><b style="font-size:13px">Nieuw bericht</b>
+      <textarea id="mtext" placeholder="Schrijf een mededeling…"></textarea>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--grijs);margin-top:8px"><input type="checkbox" id="mbelang" style="width:auto"> Markeer als belangrijk</label>
+      <button class="knop" id="mplaats">Plaatsen</button><div id="mmsg"></div></div>`:''}
+    <div id="feed"><div class="center">Laden…</div></div>`;
+  if(isAdmin()){
+    document.getElementById("mplaats").onclick=async()=>{
+      const t=(document.getElementById("mtext").value||'').trim(); if(!t)return;
+      const belang=document.getElementById("mbelang").checked;
+      try{await setDoc(doc(collection(db,"messages")),{text:t,by:ME.uid,byName:(MYUSER&&MYUSER.name)||ME.email||"Teammanager",belangrijk:belang,ts:serverTimestamp()});
+        document.getElementById("mtext").value="";document.getElementById("mbelang").checked=false;
+        const m=document.getElementById("mmsg");m.className="meld";m.textContent="Geplaatst.";}
+      catch(e){const m=document.getElementById("mmsg");m.className="fout";m.textContent=e.message;}
+    };
+  }
+  const u=onSnapshot(query(collection(db,"messages"),orderBy("ts","desc")),snap=>{
+    const feed=document.getElementById("feed"); if(!feed)return;
+    const msgs=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!msgs.length){feed.innerHTML=`<div class="kaart"><div class="center">Nog geen berichten.</div></div>`;return;}
+    feed.innerHTML=msgs.map(m=>`<div class="kaart" style="${m.belangrijk?'border-color:#F3C7C7':''}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><b style="font-size:13px">${esc(m.byName||'Teammanager')}</b><span class="mini">${m.ts?fmtTs(m.ts):''}</span></div>
+      ${m.belangrijk?`<span style="display:inline-block;font-size:10px;font-weight:600;background:var(--rood);color:#fff;padding:2px 8px;border-radius:20px;margin:6px 0 2px">Belangrijk</span>`:''}
+      <div style="font-size:14px;margin-top:5px;white-space:pre-wrap">${esc(m.text)}</div>
+      <div style="margin-top:9px;display:flex;gap:14px"><span class="link" data-wa="${m.id}" style="font-size:12px">Kopieer voor WhatsApp</span>${isAdmin()?`<span data-del="${m.id}" style="font-size:12px;color:var(--grijs);cursor:pointer">verwijderen</span>`:''}</div></div>`).join("");
+    feed.querySelectorAll("[data-wa]").forEach(x=>x.onclick=async()=>{const m=msgs.find(z=>z.id===x.dataset.wa);const txt="📣 MO9 Rood\n"+(m?m.text:'');try{await navigator.clipboard.writeText(txt);x.textContent="Gekopieerd ✓";setTimeout(()=>{x.textContent="Kopieer voor WhatsApp";},2000);}catch(e){x.textContent="(kopiëren lukt niet)";}});
+    feed.querySelectorAll("[data-del]").forEach(x=>x.onclick=async()=>{if(confirm("Bericht verwijderen?")){try{await deleteDoc(doc(db,"messages",x.dataset.del));}catch(e){alert(e.message);}}});
+  });
+  unsub.push(u);
 }
 </script>
 </body>
