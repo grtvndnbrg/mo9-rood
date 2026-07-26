@@ -7,17 +7,21 @@
 <style>
   :root{
     --rood:#A32D2D; --rood-donker:#791F1F; --rood-licht:#FCEBEB;
+    --zwart:#1a1a1a; --goud:#E3A72E;
     --tekst:#1c1c1c; --grijs:#5f5f5f; --lichtgrijs:#8a8a8a;
-    --lijn:#e7e3da; --vlak:#ffffff; --pagina:#f5f2ec; --zacht:#faf8f4;
+    --lijn:#e7e3da; --vlak:#ffffff; --pagina:#f4f3f0; --zacht:#faf9f6;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--pagina);color:var(--tekst);line-height:1.6;-webkit-font-smoothing:antialiased}
   .wrap{max-width:640px;margin:0 auto;background:var(--vlak);min-height:100vh}
-  header{background:var(--rood);color:#fff;padding:26px 22px 22px}
-  header .kicker{font-size:12px;letter-spacing:.06em;color:#F7C1C1;text-transform:uppercase}
-  header h1{font-size:26px;font-weight:600;margin-top:6px}
-  header .club{font-size:14px;color:#F7C1C1;margin-top:2px}
+  header{background:var(--zwart);color:#fff;padding:20px 22px 18px;border-bottom:4px solid var(--goud);display:flex;align-items:center;gap:16px}
+  header .logo{height:62px;width:auto;flex:none}
+  header .kop{flex:1;min-width:0}
+  header .kicker{font-size:12px;letter-spacing:.06em;color:var(--goud);text-transform:uppercase}
+  header h1{font-size:24px;font-weight:600;margin-top:3px}
+  header .club{font-size:13px;color:#c9c7c2;margin-top:2px}
+  header .badge{display:inline-block;margin-top:9px;background:var(--rood);color:#fff;font-size:12px;font-weight:600;padding:3px 11px;border-radius:20px}
   main{padding:20px 18px 40px}
   h2{font-size:17px;font-weight:600;margin:26px 0 12px}
   .banner{background:var(--rood-licht);border:1px solid #F3C7C7;border-radius:14px;padding:14px 16px}
@@ -51,9 +55,13 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="kicker">Teampagina</div>
-    <h1 id="teamnaam">Meisjes O9 — Rood</h1>
-    <div class="club" id="clubnaam">Naam hockeyclub</div>
+    <img class="logo" id="logo" src="" alt="HC Schiedam logo">
+    <div class="kop">
+      <div class="kicker" id="clubnaam">HC Schiedam</div>
+      <h1 id="teamnaam">MO9 Rood</h1>
+      <div class="club">Meisjes Onder 9</div>
+      <span class="badge">Team Rood</span>
+    </div>
   </header>
   <main>
     <div id="banner"></div>
@@ -84,8 +92,9 @@
 
 <script>
 const CONFIG = {
-  clubNaam: "Naam hockeyclub",
-  teamNaam: "Meisjes O9 — Rood",
+  clubNaam: "HC Schiedam",
+  teamNaam: "MO9 Rood",
+  logoUrl: "https://lirp.cdn-website.com/dfcb1f77/dms3rep/multi/opt/HCSLOGO-400h.png",
   // Plak hier de ID van je gepubliceerde/gedeelde Schema-Sheet (staat in de URL tussen /d/ en /edit):
   sheetId: "1VO6c_OI1LSi4gL6oR5eZSJJCDC-b5Oq7KMp0CoEQdEM",
   maxWedstrijden: 8
@@ -145,6 +154,7 @@ function render(data){
 async function laad(){
   document.getElementById("clubnaam").textContent=CONFIG.clubNaam;
   document.getElementById("teamnaam").textContent=CONFIG.teamNaam;
+  document.getElementById("logo").src=CONFIG.logoUrl;
   document.getElementById("volglink").href="https://docs.google.com/spreadsheets/d/"+CONFIG.sheetId+"/edit";
   try{
     const url="https://docs.google.com/spreadsheets/d/"+CONFIG.sheetId+"/gviz/tq?tqx=out:csv";
